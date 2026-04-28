@@ -1,0 +1,50 @@
+name: microfinance_tantsaha
+description: "Une application Flutter simple pour la gestion des finances personnelles (revenus/dépenses) avec stockage local Hive et gestion d'état Riverpod."
+
+# Empêche la publication accidentelle sur pub.dev
+publish_to: 'none'
+
+# Version de l'application
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.10.4 <4.0.0'  # Compatibilité avec Flutter 3.19+ et Dart 3.10+
+
+# --- Dépendances principales ---
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # 📦 Gestion d'état (Provider)
+  provider: ^6.1.2  # Version stable et recommandée
+
+  # 🔢 Utilitaires
+  cupertino_icons: ^1.0.8  # Icônes iOS (optionnel, mais utile)
+  intl: ^0.19.0  # Pour le formatage des nombres et dates
+
+# --- Dépendances de développement ---
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  # 🧹 Linters (bonnes pratiques)
+  flutter_lints: ^4.0.0  # Règles de linting recommandées par Flutter
+
+# --- Configuration Flutter ---
+flutter:
+  # Utilise les icônes Material Design
+  uses-material-design: true
+
+  # 📁 Assets (si tu veux ajouter des images ou polices personnalisées)
+  # Exemple :
+  # assets:
+  #   - assets/images/
+  #   - assets/fonts/
+
+  # 🔤 Polices personnalisées (optionnel)
+  # fonts:
+  #   - family: Roboto
+  #     fonts:
+  #       - asset: assets/fonts/Roboto-Regular.ttf
+  #       - asset: assets/fonts/Roboto-Bold.ttf
+  #         weight: 700
