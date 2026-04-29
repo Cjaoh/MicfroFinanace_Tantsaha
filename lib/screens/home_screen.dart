@@ -3,7 +3,9 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../providers/transaction_provider.dart';
 import '../models/transaction_model.dart';
-import '../constants/app_colors.dart';
+import '../core/app_theme.dart';
+import '../widgets/transaction_tile.dart';
+import '../widgets/category_picker.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -15,161 +17,16 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
 
   String _formatAriary(double montant) {
-    return NumberFormat('#,###', 'fr_FR')
-      .format(montant)
-      .replaceAll(',', ' ') + ' Ar';
+    return '${NumberFormat('#,###', 'fr_FR').format(montant).replaceAll(',', ' ')} Ar';
   }
 
-  // Mini-card pour le résumé financier
-  Widget _buildMiniCard(String label, String valeur, Color couleur) {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-        decoration: BoxDecoration(
-          color: AppColors.creamCard,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: AppColors.goldBorder, width: 0.8),
-        ),
-        child: Column(
-          children: [
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 10,
-                color: AppColors.lightBrown,
-                fontWeight: FontWeight.w600,
-                letterSpacing: 0.5,
-              ),
-            ),
-            const SizedBox(height: 5),
-            Text(
-              valeur,
-              style: TextStyle(
-                fontSize: 12,
-                fontWeight: FontWeight.bold,
-                color: couleur,
-              ),
-              textAlign: TextAlign.center,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // Tuile de transaction avec swipe to delete
-  Widget _buildTransactionTile(TransactionModel tx, TransactionProvider provider, BuildContext context) {
-    final isRevenu = tx.type == "income";
-
-    return Dismissible(
-      key: Key(tx.id),
-      direction: DismissDirection.endToStart,
-      confirmDismiss: (_) async {
-        return await showDialog<bool>(
-          context: context,
-          builder: (_) => AlertDialog(
-            backgroundColor: AppColors.creamBg,
-            title: Text(
-              "Supprimer ?",
-              style: TextStyle(color: AppColors.primaryBrown),
-            ),
-            content: const Text(
-              "Cette transaction sera supprimée définitivement.",
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context, false),
-                child: Text(
-                  "Annuler",
-                  style: TextStyle(color: AppColors.lightBrown),
-                ),
-              ),
-              TextButton(
-                onPressed: () => Navigator.pop(context, true),
-                child: Text(
-                  "Supprimer",
-                  style: TextStyle(color: AppColors.depenseRed),
-                ),
-              ),
-            ],
-          ),
-        ) ?? false;
-      },
-      onDismissed: (_) {
-        provider.removeTransaction(tx.id);
-      },
-      background: Container(
-        alignment: Alignment.centerRight,
-        margin: const EdgeInsets.only(bottom: 8),
-        padding: const EdgeInsets.only(right: 18),
-        decoration: BoxDecoration(
-          color: AppColors.depenseRed,
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: const Icon(Icons.delete_outline, color: Colors.white, size: 22),
-      ),
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 8),
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-        decoration: BoxDecoration(
-          color: AppColors.creamCard,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: AppColors.goldBorder, width: 0.8),
-        ),
-        child: Row(
-          children: [
-            // Barre indicateur couleur gauche
-            Container(
-              width: 4,
-              height: 38,
-              decoration: BoxDecoration(
-                color: isRevenu ? AppColors.revenueGreen : AppColors.depenseRed,
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-            const SizedBox(width: 12),
-            // Type + Date
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    isRevenu ? "Revenu" : "Dépense",
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textDark,
-                    ),
-                  ),
-                  const SizedBox(height: 3),
-                  Text(
-                    DateFormat('dd/MM/yyyy – HH:mm').format(tx.date),
-                    style: TextStyle(
-                      fontSize: 11,
-                      color: AppColors.textMuted,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            // Montant
-            Text(
-              (isRevenu ? "+ " : "- ") + _formatAriary(tx.amount),
-              style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.bold,
-                color: isRevenu ? AppColors.revenueGreen : AppColors.depenseRed,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
+  
+  
   void _ouvrirBottomSheet(String type, TransactionProvider provider, BuildContext context) {
-    final TextEditingController ctrl = TextEditingController();
+    final TextEditingController amountController = TextEditingController();
+    final TextEditingController descriptionController = TextEditingController();
+    String? selectedCategory;
+    String? selectedIcon;
     String? errorText;
 
     showModalBottomSheet(
@@ -178,9 +35,9 @@ class _HomeScreenState extends State<HomeScreen> {
       backgroundColor: Colors.transparent,
       builder: (ctx) => StatefulBuilder(
         builder: (context, setModalState) => Container(
-          decoration: const BoxDecoration(
-            color: Color(0xFFFFF8F0),
-            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          decoration: BoxDecoration(
+            color: AppColors.white,
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
           ),
           padding: EdgeInsets.only(
             bottom: MediaQuery.of(context).viewInsets.bottom + 28,
@@ -191,12 +48,11 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-
               // Handle bar
               Container(
                 width: 44, height: 4,
                 decoration: BoxDecoration(
-                  color: AppColors.goldBorder,
+                  color: AppColors.borderColor,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -205,41 +61,66 @@ class _HomeScreenState extends State<HomeScreen> {
               // Titre
               Text(
                 type == "Revenu" ? "Nouveau revenu" : "Nouvelle dépense",
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w500,
-                  color: Color(0xFF7C4A1E),
+                  color: AppColors.primary,
                 ),
               ),
               const SizedBox(height: 22),
 
-              // TextField
+              // Category Picker
+              CategoryPicker(
+                transactionType: type == "Revenu" ? "income" : "expense",
+                onCategorySelected: (category) {
+                  setModalState(() {
+                    selectedCategory = category.label;
+                    selectedIcon = category.icon;
+                  });
+                },
+              ),
+              const SizedBox(height: 16),
+
+              // TextField montant
               TextField(
-                controller: ctrl,
+                controller: amountController,
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                autofocus: true,
                 decoration: InputDecoration(
                   hintText: "Montant en Ariary",
                   suffixText: "Ar",
                   errorText: errorText,
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 14,
-                  ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: Color(0xFFF5D5A8)),
+                    borderSide: BorderSide(color: AppColors.borderColor),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: Color(0xFFF5D5A8)),
+                    borderSide: BorderSide(color: AppColors.borderColor),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(
-                      color: Color(0xFF7C4A1E),
-                      width: 1.5,
-                    ),
+                    borderSide: BorderSide(color: AppColors.primary, width: 1.5),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 12),
+
+              // TextField description (optionnel)
+              TextField(
+                controller: descriptionController,
+                decoration: InputDecoration(
+                  hintText: "Description (optionnel)",
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: AppColors.borderColor),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: AppColors.borderColor),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: AppColors.primary, width: 1.5),
                   ),
                 ),
               ),
@@ -249,23 +130,27 @@ class _HomeScreenState extends State<HomeScreen> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF7C4A1E),
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 15),
-                    shape: const StadiumBorder(),
-                    elevation: 0,
-                  ),
                   onPressed: () {
-                    final val = double.tryParse(ctrl.text.trim());
+                    final val = double.tryParse(amountController.text.trim());
                     if (val == null || val <= 0) {
                       setModalState(() => errorText = "Entrez un montant valide");
                       return;
                     }
-                    provider.addTransactionWithAmount(
+                    if (selectedCategory == null || selectedIcon == null) {
+                      setModalState(() => errorText = "Sélectionnez une catégorie");
+                      return;
+                    }
+
+                    // Créer la transaction avec les catégories
+                    final transaction = TransactionModel.create(
                       amount: val,
                       type: type == "Revenu" ? "income" : "expense",
+                      date: DateTime.now(),
+                      categorie: selectedCategory,
+                      iconeCategorie: selectedIcon,
                     );
+
+                    provider.addTransaction(transaction);
                     Navigator.pop(context);
                   },
                   child: const Text(
@@ -288,42 +173,34 @@ class _HomeScreenState extends State<HomeScreen> {
     final solde = transactionProvider.balance;
 
     return Scaffold(
-      backgroundColor: AppColors.creamBg,
+      appBar: AppBar(
+        backgroundColor: AppColors.primary,
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'MICROFINANCE MALAGASY',
+              style: TextStyle(
+                fontSize: 10,
+                color: AppColors.subtleBlue,
+                letterSpacing: 1.5,
+              ),
+            ),
+            Text(
+              'Tantsaha MVP',
+              style: TextStyle(
+                fontSize: 20,
+                color: Colors.white,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+        toolbarHeight: 70,
+      ),
       body: SafeArea(
         child: Column(
           children: [
-
-            //══════════════════════════════════════
-            // BLOC 1 — HEADER marron
-            //══════════════════════════════════════
-            Container(
-              width: double.infinity,
-              color: AppColors.primaryBrown,
-              padding: const EdgeInsets.fromLTRB(20, 18, 20, 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    "MICROFINANCE MALAGASY",
-                    style: TextStyle(
-                      fontSize: 10,
-                      color: AppColors.goldText,
-                      fontWeight: FontWeight.w600,
-                      letterSpacing: 2.0,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  const Text(
-                    "Tantsaha MVP",
-                    style: TextStyle(
-                      fontSize: 22,
-                      color: Colors.white,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
-            ),
 
             //══════════════════════════════════════
             // SCROLLABLE BODY
@@ -338,59 +215,27 @@ class _HomeScreenState extends State<HomeScreen> {
                     //════════════════════════════
                     Container(
                       width: double.infinity,
-                      color: AppColors.creamBg,
                       padding: const EdgeInsets.symmetric(vertical: 28),
                       child: Column(
                         children: [
-                          Text(
-                            "SOLDE TOTAL",
-                            style: TextStyle(
-                              fontSize: 10,
-                              color: AppColors.lightBrown,
-                              fontWeight: FontWeight.w600,
-                              letterSpacing: 1.5,
-                            ),
-                          ),
-                          const SizedBox(height: 16),
+                          Text('SOLDE TOTAL',
+                            style: TextStyle(fontSize: 10, letterSpacing: 1.5,
+                              color: AppColors.mutedText)),
+                          const SizedBox(height: 10),
                           Container(
-                            width: 120,
-                            height: 120,
+                            width: 100, height: 100,
                             decoration: BoxDecoration(
+                              color: AppColors.primary,
                               shape: BoxShape.circle,
-                              color: AppColors.primaryBrown,
-                              border: Border.all(
-                                color: AppColors.goldBorder,
-                                width: 3,
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: AppColors.primaryBrown.withOpacity(0.25),
-                                  blurRadius: 16,
-                                  offset: const Offset(0, 6),
-                                ),
-                              ],
                             ),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Text(
-                                  _formatAriary(solde),
-                                  style: const TextStyle(
-                                    fontSize: 15,
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                                const SizedBox(height: 2),
-                                Text(
-                                  "Ariary",
-                                  style: TextStyle(
-                                    fontSize: 10,
-                                    color: AppColors.goldText,
-                                    letterSpacing: 0.5,
-                                  ),
-                                ),
+                                Text('${_formatAriary(solde)}',
+                                  style: TextStyle(fontSize: 16, color: Colors.white,
+                                    fontWeight: FontWeight.w500)),
+                                Text('Ariary',
+                                  style: TextStyle(fontSize: 10, color: AppColors.subtleBlue)),
                               ],
                             ),
                           ),
@@ -399,28 +244,61 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
 
                     //════════════════════════════
-                    // BLOC 3 — SUMMARY ROW
+                    // BLOC 3 — CARTES STATISTIQUES
                     //════════════════════════════
                     Padding(
-                      padding: const EdgeInsets.fromLTRB(12, 0, 12, 4),
+                      padding: const EdgeInsets.symmetric(horizontal: 12),
                       child: Row(
                         children: [
-                          _buildMiniCard(
-                            "Revenus",
-                            "+ ${_formatAriary(transactionProvider.totalRevenus)}",
-                            AppColors.revenueGreen,
+                          // Carte Revenus
+                          Expanded(
+                            child: Card(
+                              child: Padding(
+                                padding: EdgeInsets.all(12),
+                                child: Column(
+                                  children: [
+                                    Text('Revenus', style: TextStyle(fontSize: 11,
+                                      color: AppColors.mutedText)),
+                                    Text('+ ${_formatAriary(transactionProvider.totalRevenus)}', style: TextStyle(fontSize: 14,
+                                      fontWeight: FontWeight.w500, color: AppColors.revAmount)),
+                                  ],
+                                ),
+                              ),
+                            ),
                           ),
-                          const SizedBox(width: 6),
-                          _buildMiniCard(
-                            "Dépenses",
-                            "- ${_formatAriary(transactionProvider.totalDepenses)}",
-                            AppColors.depenseRed,
+                          const SizedBox(width: 8),
+                          // Carte Dépenses
+                          Expanded(
+                            child: Card(
+                              child: Padding(
+                                padding: EdgeInsets.all(12),
+                                child: Column(
+                                  children: [
+                                    Text('Dépenses', style: TextStyle(fontSize: 11,
+                                      color: AppColors.mutedText)),
+                                    Text('- ${_formatAriary(transactionProvider.totalDepenses)}', style: TextStyle(fontSize: 14,
+                                      fontWeight: FontWeight.w500, color: AppColors.depAmount)),
+                                  ],
+                                ),
+                              ),
+                            ),
                           ),
-                          const SizedBox(width: 6),
-                          _buildMiniCard(
-                            "Balance",
-                            _formatAriary(solde),
-                            AppColors.primaryBrown,
+                          const SizedBox(width: 8),
+                          // Carte Balance
+                          Expanded(
+                            child: Card(
+                              child: Padding(
+                                padding: EdgeInsets.all(12),
+                                child: Column(
+                                  children: [
+                                    Text('Balance', style: TextStyle(fontSize: 11,
+                                      color: AppColors.mutedText)),
+                                    Text(_formatAriary(solde), style: TextStyle(fontSize: 14,
+                                      fontWeight: FontWeight.w500, color: AppColors.balText)),
+                                  ],
+                                ),
+                              ),
+                            ),
                           ),
                         ],
                       ),
@@ -441,7 +319,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 style: TextStyle(fontSize: 13),
                               ),
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.primaryBrown,
+                                backgroundColor: AppColors.primary,
                                 foregroundColor: Colors.white,
                                 padding: const EdgeInsets.symmetric(vertical: 14),
                                 shape: const StadiumBorder(),
@@ -459,11 +337,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                 style: TextStyle(fontSize: 13),
                               ),
                               style: OutlinedButton.styleFrom(
-                                foregroundColor: AppColors.lightBrown,
+                                foregroundColor: AppColors.mutedText,
                                 padding: const EdgeInsets.symmetric(vertical: 14),
                                 shape: const StadiumBorder(),
                                 side: const BorderSide(
-                                  color: AppColors.goldBorder,
+                                  color: AppColors.borderColor,
                                   width: 1.2,
                                 ),
                               ),
@@ -485,7 +363,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           "HISTORIQUE",
                           style: TextStyle(
                             fontSize: 11,
-                            color: AppColors.lightBrown,
+                            color: AppColors.mutedText,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 1.5,
                           ),
@@ -500,7 +378,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             "Aucune transaction pour l'instant",
                             style: TextStyle(
                               fontSize: 14,
-                              color: AppColors.lightBrown,
+                              color: AppColors.mutedText,
                               fontStyle: FontStyle.italic,
                             ),
                           ),
@@ -512,7 +390,27 @@ class _HomeScreenState extends State<HomeScreen> {
                           itemCount: transactions.length,
                           itemBuilder: (_, index) {
                             final tx = transactions[index];
-                            return _buildTransactionTile(tx, transactionProvider, context);
+                            return Dismissible(
+                              key: Key(tx.id),
+                              direction: DismissDirection.endToStart,
+                              onDismissed: (_) {
+                                transactionProvider.removeTransaction(tx.id);
+                              },
+                              background: Container(
+                                alignment: Alignment.centerRight,
+                                margin: const EdgeInsets.symmetric(vertical: 4),
+                                padding: const EdgeInsets.only(right: 20),
+                                decoration: BoxDecoration(
+                                  color: Colors.red,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: const Icon(Icons.delete, color: Colors.white),
+                              ),
+                              child: TransactionTile(
+                                transaction: tx,
+                                onDelete: () => transactionProvider.removeTransaction(tx.id),
+                              ),
+                            );
                           },
                         ),
 

@@ -3,12 +3,16 @@ class TransactionModel {
   final double amount;
   final String type; // 'income' or 'expense'
   final DateTime date;
+  final String? categorie;
+  final String? iconeCategorie;
 
   TransactionModel({
     required this.id,
     required this.amount,
     required this.type,
     required this.date,
+    this.categorie,
+    this.iconeCategorie,
   });
 
   // Create a new transaction with generated ID
@@ -16,6 +20,8 @@ class TransactionModel {
     required this.amount,
     required this.type,
     required this.date,
+    this.categorie,
+    this.iconeCategorie,
   }) : id = DateTime.now().millisecondsSinceEpoch.toString();
 
   // Convert to map for storage
@@ -25,6 +31,8 @@ class TransactionModel {
       'amount': amount,
       'type': type,
       'date': date.millisecondsSinceEpoch,
+      'categorie': categorie,
+      'iconeCategorie': iconeCategorie,
     };
   }
 
@@ -35,6 +43,8 @@ class TransactionModel {
       amount: map['amount'],
       type: map['type'],
       date: DateTime.fromMillisecondsSinceEpoch(map['date']),
+      categorie: map['categorie'],
+      iconeCategorie: map['iconeCategorie'],
     );
   }
 
