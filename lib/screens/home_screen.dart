@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../providers/transaction_provider.dart';
 import '../models/transaction_model.dart';
+import '../models/transaction_type.dart';
 import '../core/app_theme.dart';
 import '../widgets/transaction_tile.dart';
 import '../widgets/category_picker.dart';
@@ -16,12 +17,10 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
 
-  String _formatAriary(double montant) {
+  String _formatAriary(int montant) {
     return '${NumberFormat('#,###', 'fr_FR').format(montant).replaceAll(',', ' ')} Ar';
   }
 
-  
-  
   void _ouvrirBottomSheet(String type, TransactionProvider provider, BuildContext context) {
     final TextEditingController amountController = TextEditingController();
     final TextEditingController descriptionController = TextEditingController();
@@ -84,7 +83,7 @@ class _HomeScreenState extends State<HomeScreen> {
               // TextField montant
               TextField(
                 controller: amountController,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                keyboardType: TextInputType.number,
                 decoration: InputDecoration(
                   hintText: "Montant en Ariary",
                   suffixText: "Ar",
@@ -131,7 +130,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    final val = double.tryParse(amountController.text.trim());
+                    // Ariary : montant entier, pas de décimales (RM-01, RM-03).
+                    final val = int.tryParse(amountController.text.trim());
                     if (val == null || val <= 0) {
                       setModalState(() => errorText = "Entrez un montant valide");
                       return;
@@ -143,8 +143,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
                     // Créer la transaction avec les catégories
                     final transaction = TransactionModel.create(
-                      amount: val,
-                      type: type == "Revenu" ? "income" : "expense",
+                      amountAriary: val,
+                      type: type == "Revenu" ? TransactionType.income : TransactionType.expense,
                       date: DateTime.now(),
                       categorie: selectedCategory,
                       iconeCategorie: selectedIcon,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../models/transaction_model.dart';
+import '../models/transaction_type.dart';
 import '../core/app_theme.dart';
 
 class TransactionTile extends StatelessWidget {
@@ -15,9 +16,9 @@ class TransactionTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final estRevenu = transaction.type == 'income';
+    final estRevenu = transaction.type == TransactionType.income;
     final dateFormatee = DateFormat('dd/MM/yyyy').format(transaction.date);
-    
+
     // Utiliser les catégories du modèle ou des valeurs par défaut
     final iconCategorie = transaction.iconeCategorie ?? (estRevenu ? '🌾' : '🛒');
     final labelCategorie = transaction.categorie ?? (estRevenu ? 'Revenu' : 'Dépense');
@@ -76,7 +77,7 @@ class TransactionTile extends StatelessWidget {
             ),
             // Montant
             Text(
-              '${estRevenu ? "+" : "-"} ${transaction.amount.toInt()} Ar',
+              transaction.formattedAmount,
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
