@@ -7,15 +7,19 @@ import 'package:sqflite/sqflite.dart';
 /// Ouvrir plusieurs connexions à la même base provoque des verrous
 /// et des comportements imprévisibles.
 class AppDatabase {
-  AppDatabase._();
+  AppDatabase._([this._customPath]);
 
   static final AppDatabase instance = AppDatabase._();
+
+  /// Base séparée pour les tests (ex. [inMemoryDatabasePath]).
+  factory AppDatabase.forTesting(String path) => AppDatabase._(path);
 
   static const String _dbName = 'tantsaha.db';
   static const int _dbVersion = 1;
 
   static const String transactionsTable = 'transactions';
 
+  final String? _customPath;
   Database? _database;
 
   /// Ouvre la base au premier appel, puis réutilise la même connexion.
@@ -23,9 +27,9 @@ class AppDatabase {
     final existing = _database;
     if (existing != null) return existing;
 
-    final dbPath = await getDatabasesPath();
+    final path = _customPath ?? p.join(await getDatabasesPath(), _dbName);
     final db = await openDatabase(
-      p.join(dbPath, _dbName),
+      path,
       version: _dbVersion,
       onConfigure: _onConfigure,
       onCreate: _onCreate,
