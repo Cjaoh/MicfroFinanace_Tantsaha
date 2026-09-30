@@ -120,4 +120,20 @@ void main() {
       throwsA(isA<DatabaseException>()),
     );
   });
+
+    test('deleteAll supprime toutes les transactions', () async {
+    await repository.insert(makeTransaction(id: 'a'));
+    await repository.insert(makeTransaction(id: 'b'));
+    await repository.insert(makeTransaction(id: 'c'));
+
+    await repository.deleteAll();
+
+    expect(await repository.getAll(), isEmpty);
+  });
+
+  test('deleteAll sur une base vide ne lève pas d\'erreur', () async {
+    await repository.deleteAll();
+
+    expect(await repository.getAll(), isEmpty);
+  });
 }
