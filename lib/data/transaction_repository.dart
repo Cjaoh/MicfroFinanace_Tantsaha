@@ -43,4 +43,10 @@ class TransactionRepository {
     );
     return count > 0;
   }
+
+  /// Supprime toutes les transactions.
+  Future<void> deleteAll() async {
+    final db = await _appDatabase.database;
+    await db.delete(AppDatabase.transactionsTable);
+  }
 }
