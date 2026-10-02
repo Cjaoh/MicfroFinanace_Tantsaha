@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => TransactionProvider(),
+            create: (_) => TransactionProvider()..loadTransactions(),
       child: MaterialApp(
         title: 'Gestion Finances',
         theme: AppTheme.theme,
