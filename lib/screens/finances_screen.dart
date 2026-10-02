@@ -8,14 +8,14 @@ import '../core/app_theme.dart';
 import '../widgets/transaction_tile.dart';
 import '../widgets/category_picker.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class FinancesScreen extends StatefulWidget {
+  const FinancesScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<FinancesScreen> createState() => _FinancesScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _FinancesScreenState extends State<FinancesScreen> {
 
   String _formatAriary(int montant) {
     return '${NumberFormat('#,###', 'fr_FR').format(montant).replaceAll(',', ' ')} Ar';
@@ -187,7 +187,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             Text(
-              'Tantsaha MVP',
+              'Mes finances',
               style: TextStyle(
                 fontSize: 20,
                 color: Colors.white,
