@@ -44,7 +44,8 @@ class _FinancesScreenState extends State<FinancesScreen> {
             right: 24,
             top: 16,
           ),
-          child: Column(
+          child: SingleChildScrollView(
+            child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               // Handle bar
@@ -160,6 +161,7 @@ class _FinancesScreenState extends State<FinancesScreen> {
                 ),
               ),
             ],
+            ),
           ),
         ),
       ),
