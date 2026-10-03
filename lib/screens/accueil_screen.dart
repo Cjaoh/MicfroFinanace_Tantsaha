@@ -4,16 +4,22 @@ import 'package:intl/intl.dart';
 import '../core/app_theme.dart';
 import '../providers/transaction_provider.dart';
 
-/// Écran "Accueil" — tableau de bord, premier écran de la maquette.
+/// Écran 3 de la maquette : Tableau de bord.
 ///
-/// Le solde et les totaux revenus/dépenses viennent du vrai
-/// [TransactionProvider] (donc de SQLite). Les sections "Mes
-/// exploitations" et "Prochains événements" n'ont pas encore de données
-/// réelles derrière (modules P2/P4 non développés) : on affiche un état
-/// vide honnête plutôt que des exemples inventés comme sur la maquette
-/// (qui montre un agriculteur fictif "Rado" à titre d'exemple).
-class AccueilScreen extends StatelessWidget {
+/// Le solde et les totaux viennent du vrai [TransactionProvider] (SQLite).
+/// Les sections "Mes exploitations" et "Prochains événements" restent en
+/// état vide tant que les modules correspondants n'existent pas : on
+/// n'affiche jamais de données inventées.
+class AccueilScreen extends StatefulWidget {
   const AccueilScreen({super.key});
+
+  @override
+  State<AccueilScreen> createState() => _AccueilScreenState();
+}
+
+class _AccueilScreenState extends State<AccueilScreen> {
+  // Œil de la maquette : masque le solde (utile en public).
+  bool _soldeVisible = true;
 
   String _formatAriary(int montant) {
     return '${NumberFormat('#,###', 'fr_FR').format(montant).replaceAll(',', ' ')} Ar';
@@ -28,37 +34,41 @@ class AccueilScreen extends StatelessWidget {
         child: ListView(
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
           children: [
-            // En-tête : salutation + notifications
+            // En-tête : avatar + salutation + cloche
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Bonjour !',
-                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
-                    ),
-                    SizedBox(height: 2),
-                    Text(
-                      'Bon courage pour vos cultures',
-                      style: TextStyle(fontSize: 12, color: AppColors.mutedText),
-                    ),
-                  ],
+                const CircleAvatar(
+                  radius: 22,
+                  backgroundColor: AppColors.revBg,
+                  child: Icon(Icons.person, color: AppColors.primary),
                 ),
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryPale,
-                    shape: BoxShape.circle,
+                const SizedBox(width: 12),
+                const Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Bonjour !',
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.accentText,
+                        ),
+                      ),
+                      SizedBox(height: 2),
+                      Text(
+                        'Bon courage pour vos cultures !',
+                        style: TextStyle(fontSize: 12, color: AppColors.mutedText),
+                      ),
+                    ],
                   ),
-                  child: const Icon(Icons.notifications_outlined, color: AppColors.primary, size: 20),
                 ),
+                const Icon(Icons.notifications_outlined, color: AppColors.primary),
               ],
             ),
             const SizedBox(height: 20),
 
-            // Carte solde du compte
+            // Carte solde (vert foncé) avec œil
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(20),
@@ -72,32 +82,28 @@ class AccueilScreen extends StatelessWidget {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'SOLDE DE VOTRE COMPTE',
-                        style: TextStyle(
-                          fontSize: 11,
-                          letterSpacing: 1.0,
-                          color: AppColors.subtleGreen,
-                        ),
+                      const Text(
+                        'Solde de votre compte',
+                        style: TextStyle(fontSize: 12, color: AppColors.subtleGreen),
                       ),
                       const SizedBox(height: 8),
                       Text(
-                        _formatAriary(provider.balance),
+                        _soldeVisible ? _formatAriary(provider.balance) : '•••••• Ar',
                         style: const TextStyle(
-                          fontSize: 22,
+                          fontSize: 26,
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                     ],
                   ),
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.15),
-                      shape: BoxShape.circle,
+                  IconButton(
+                    onPressed: () => setState(() => _soldeVisible = !_soldeVisible),
+                    tooltip: _soldeVisible ? 'Masquer le solde' : 'Afficher le solde',
+                    icon: Icon(
+                      _soldeVisible ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                      color: Colors.white,
                     ),
-                    child: const Icon(Icons.account_balance_wallet_outlined, color: Colors.white),
                   ),
                 ],
               ),
@@ -113,7 +119,7 @@ class AccueilScreen extends StatelessWidget {
                     iconeBg: AppColors.revBg,
                     iconeColor: AppColors.revAmount,
                     label: 'Revenus',
-                    valeur: _formatAriary(provider.totalRevenus),
+                    valeur: _soldeVisible ? _formatAriary(provider.totalRevenus) : '••••',
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -123,15 +129,15 @@ class AccueilScreen extends StatelessWidget {
                     iconeBg: AppColors.depBg,
                     iconeColor: AppColors.depAmount,
                     label: 'Dépenses',
-                    valeur: _formatAriary(provider.totalDepenses),
+                    valeur: _soldeVisible ? _formatAriary(provider.totalDepenses) : '••••',
                   ),
                 ),
                 const SizedBox(width: 8),
-                Expanded(
+                const Expanded(
                   child: _StatCard(
                     icone: Icons.savings_outlined,
-                    iconeBg: AppColors.revBg,
-                    iconeColor: AppColors.revAmount,
+                    iconeBg: AppColors.savBg,
+                    iconeColor: AppColors.savAmount,
                     label: 'Épargne',
                     valeur: 'Bientôt',
                   ),
@@ -140,16 +146,15 @@ class AccueilScreen extends StatelessWidget {
             ),
             const SizedBox(height: 24),
 
-            _SectionHeader(titre: 'Mes exploitations'),
+            const _SectionHeader(titre: 'Mes exploitations'),
             const SizedBox(height: 8),
             const _EmptyStateCard(
               icone: Icons.agriculture_outlined,
-              message:
-                  "Aucune exploitation enregistrée pour l'instant.\nArrive dans une prochaine étape (P2).",
+              message: "Aucune exploitation enregistrée pour l'instant.",
             ),
             const SizedBox(height: 24),
 
-            _SectionHeader(titre: 'Prochains événements'),
+            const _SectionHeader(titre: 'Prochains événements'),
             const SizedBox(height: 8),
             const _EmptyStateCard(
               icone: Icons.event_outlined,
@@ -162,8 +167,7 @@ class AccueilScreen extends StatelessWidget {
   }
 }
 
-/// Carte de statistique (Revenus / Dépenses / Épargne) avec icône colorée,
-/// reproduisant le style de la maquette.
+/// Carte de statistique avec icône colorée (style maquette).
 class _StatCard extends StatelessWidget {
   final IconData icone;
   final Color iconeBg;
@@ -185,22 +189,24 @@ class _StatCard extends StatelessWidget {
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Container(
-              padding: const EdgeInsets.all(6),
+              padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: iconeBg,
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(10),
               ),
-              child: Icon(icone, size: 16, color: iconeColor),
+              child: Icon(icone, size: 18, color: iconeColor),
             ),
             const SizedBox(height: 8),
             Text(label, style: const TextStyle(fontSize: 11, color: AppColors.mutedText)),
             const SizedBox(height: 2),
-            Text(
-              valeur,
-              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: iconeColor),
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                valeur,
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: iconeColor),
+              ),
             ),
           ],
         ),
@@ -218,11 +224,18 @@ class _SectionHeader extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(titre, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
-        // "Voir tout" désactivé : honnête tant qu'il n'y a rien à voir.
-        TextButton(
+        Text(
+          titre,
+          style: const TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w700,
+            color: AppColors.accentText,
+          ),
+        ),
+        // "Voir tout" désactivé tant qu'il n'y a rien à voir.
+        const TextButton(
           onPressed: null,
-          child: Text('Voir tout', style: TextStyle(fontSize: 12, color: AppColors.mutedText)),
+          child: Text('Voir tout', style: TextStyle(fontSize: 12)),
         ),
       ],
     );
@@ -239,16 +252,18 @@ class _EmptyStateCard extends StatelessWidget {
     return Card(
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-        child: Column(
-          children: [
-            Icon(icone, size: 32, color: AppColors.mutedText),
-            const SizedBox(height: 8),
-            Text(
-              message,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontSize: 12, color: AppColors.mutedText),
-            ),
-          ],
+        child: Center(
+          child: Column(
+            children: [
+              Icon(icone, size: 32, color: AppColors.mutedText),
+              const SizedBox(height: 8),
+              Text(
+                message,
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 12, color: AppColors.mutedText),
+              ),
+            ],
+          ),
         ),
       ),
     );
