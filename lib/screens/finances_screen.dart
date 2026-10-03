@@ -184,7 +184,7 @@ class _FinancesScreenState extends State<FinancesScreen> {
               'MICROFINANCE MALAGASY',
               style: TextStyle(
                 fontSize: 10,
-                color: AppColors.subtleBlue,
+                color: AppColors.subtleGreen,
                 letterSpacing: 1.5,
               ),
             ),
@@ -237,7 +237,7 @@ class _FinancesScreenState extends State<FinancesScreen> {
                                   style: TextStyle(fontSize: 16, color: Colors.white,
                                     fontWeight: FontWeight.w500)),
                                 Text('Ariary',
-                                  style: TextStyle(fontSize: 10, color: AppColors.subtleBlue)),
+                                  style: TextStyle(fontSize: 10, color: AppColors.subtleGreen)),
                               ],
                             ),
                           ),

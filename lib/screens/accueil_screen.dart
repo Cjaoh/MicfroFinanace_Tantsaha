@@ -77,7 +77,7 @@ class AccueilScreen extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 11,
                           letterSpacing: 1.0,
-                          color: AppColors.subtleBlue,
+                          color: AppColors.subtleGreen,
                         ),
                       ),
                       const SizedBox(height: 8),
