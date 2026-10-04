@@ -9,6 +9,18 @@ import '../core/app_theme.dart';
 import '../widgets/transaction_tile.dart';
 import '../widgets/category_picker.dart';
 
+/// Libellé du formulaire -> type métier.
+TransactionType _typeFrom(String libelle) {
+  switch (libelle) {
+    case 'Revenu':
+      return TransactionType.income;
+    case 'Épargne':
+      return TransactionType.saving;
+    default:
+      return TransactionType.expense;
+  }
+}
+
 class FinancesScreen extends StatefulWidget {
   const FinancesScreen({super.key});
 
@@ -61,7 +73,11 @@ class _FinancesScreenState extends State<FinancesScreen> {
 
               // Titre
               Text(
-                type == "Revenu" ? "Nouveau revenu" : "Nouvelle dépense",
+                type == "Revenu"
+                    ? "Nouveau revenu"
+                    : type == "Épargne"
+                        ? "Mettre de côté"
+                        : "Nouvelle dépense",
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w500,
@@ -72,7 +88,7 @@ class _FinancesScreenState extends State<FinancesScreen> {
 
               // Category Picker
               CategoryPicker(
-                transactionType: type == "Revenu" ? "income" : "expense",
+                transactionType: _typeFrom(type).toDbValue(),
                 onCategorySelected: (category) {
                   setModalState(() {
                     selectedCategory = category.label;
@@ -146,7 +162,7 @@ class _FinancesScreenState extends State<FinancesScreen> {
                     // Créer la transaction avec les catégories
                     final transaction = TransactionModel.create(
                       amountAriary: val,
-                      type: type == "Revenu" ? TransactionType.income : TransactionType.expense,
+                      type: _typeFrom(type),
                       date: DateTime.now(),
                       categorie: selectedCategory,
                       iconeCategorie: selectedIcon,
@@ -199,6 +215,14 @@ class _FinancesScreenState extends State<FinancesScreen> {
                 _ouvrirBottomSheet('Dépense', provider, context);
               },
             ),
+            ListTile(
+              leading: const Icon(Icons.savings_outlined, color: AppColors.savAmount),
+              title: const Text('Mettre de l\'argent de côté'),
+              onTap: () {
+                Navigator.pop(ctx);
+                _ouvrirBottomSheet('Épargne', provider, context);
+              },
+            ),
             const SizedBox(height: 12),
           ],
         ),
@@ -232,7 +256,7 @@ class _FinancesScreenState extends State<FinancesScreen> {
           children: [
             _buildSynthese(provider),
             _buildTransactions(provider),
-            const _EpargnePlaceholder(),
+            _buildEpargne(provider),
           ],
         ),
       ),
@@ -243,7 +267,8 @@ class _FinancesScreenState extends State<FinancesScreen> {
   Widget _buildSynthese(TransactionProvider provider) {
     final revenus = provider.totalRevenus;
     final depenses = provider.totalDepenses;
-    final total = revenus + depenses;
+    final epargne = provider.totalEpargne;
+    final total = revenus + depenses + epargne;
     int pct(int v) => total == 0 ? 0 : (v * 100 / total).round();
 
     return ListView(
@@ -281,6 +306,7 @@ class _FinancesScreenState extends State<FinancesScreen> {
                       segments: [
                         _Segment(revenus.toDouble(), AppColors.revAmount),
                         _Segment(depenses.toDouble(), AppColors.depAmount),
+                        _Segment(epargne.toDouble(), AppColors.savAmount),
                       ],
                     ),
                   ),
@@ -301,6 +327,13 @@ class _FinancesScreenState extends State<FinancesScreen> {
                         label: 'Dépenses',
                         valeur: _formatAriary(depenses),
                         pct: pct(depenses),
+                      ),
+                      const SizedBox(height: 12),
+                      _LegendRow(
+                        color: AppColors.savAmount,
+                        label: 'Épargne',
+                        valeur: _formatAriary(epargne),
+                        pct: pct(epargne),
                       ),
                     ],
                   ),
@@ -327,20 +360,100 @@ class _FinancesScreenState extends State<FinancesScreen> {
 
   // ───────────── Onglet 2 : Transactions ─────────────
   Widget _buildTransactions(TransactionProvider provider) {
-    final transactions = provider.transactions;
+    return _listeTransactions(
+      provider,
+      provider.transactions,
+      "Aucune transaction pour l'instant",
+    );
+  }
 
-    if (transactions.isEmpty) {
-      return const Center(
-        child: Text("Aucune transaction pour l'instant",
-            style: TextStyle(color: AppColors.mutedText)),
+  // ───────────── Onglet 3 : Épargne ─────────────
+  Widget _buildEpargne(TransactionProvider provider) {
+    final epargnes = provider.transactions
+        .where((t) => t.type == TransactionType.saving)
+        .toList();
+
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+          child: Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: AppColors.savBg,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(Icons.savings_outlined,
+                        color: AppColors.savAmount),
+                  ),
+                  const SizedBox(width: 14),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text('Total épargné',
+                          style: TextStyle(
+                              fontSize: 12, color: AppColors.mutedText)),
+                      const SizedBox(height: 4),
+                      Text(_formatAriary(provider.totalEpargne),
+                          style: const TextStyle(
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.savAmount)),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        Expanded(
+          child: _listeTransactions(
+            provider,
+            epargnes,
+            "Aucune épargne pour l'instant",
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          child: SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 14),
+              ),
+              onPressed: () => _ouvrirBottomSheet('Épargne', provider, context),
+              child: const Text("Mettre de l'argent de côté",
+                  style: TextStyle(fontSize: 15)),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// Liste commune aux onglets Transactions et Épargne.
+  Widget _listeTransactions(
+    TransactionProvider provider,
+    List<TransactionModel> items,
+    String messageVide,
+  ) {
+    if (items.isEmpty) {
+      return Center(
+        child: Text(messageVide,
+            style: const TextStyle(color: AppColors.mutedText)),
       );
     }
 
     return ListView.builder(
       padding: const EdgeInsets.all(12),
-      itemCount: transactions.length,
+      itemCount: items.length,
       itemBuilder: (_, index) {
-        final tx = transactions[index];
+        final tx = items[index];
         return Dismissible(
           key: Key(tx.id),
           direction: DismissDirection.endToStart,
@@ -361,30 +474,6 @@ class _FinancesScreenState extends State<FinancesScreen> {
           ),
         );
       },
-    );
-  }
-}
-
-// ───────────── Onglet 3 : Épargne (sous-étape 3b) ─────────────
-class _EpargnePlaceholder extends StatelessWidget {
-  const _EpargnePlaceholder();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Center(
-      child: Padding(
-        padding: EdgeInsets.all(32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.savings_outlined, size: 40, color: AppColors.savAmount),
-            SizedBox(height: 12),
-            Text("Le suivi de l'épargne arrive bientôt.",
-                textAlign: TextAlign.center,
-                style: TextStyle(color: AppColors.mutedText)),
-          ],
-        ),
-      ),
     );
   }
 }

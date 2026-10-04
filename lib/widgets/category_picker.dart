@@ -40,8 +40,23 @@ class _CategoryPickerState extends State<CategoryPicker> {
     Category(icon: '🏠', label: 'Besoins familiaux'),
   ];
 
-  List<Category> get categories => 
-      widget.transactionType == 'income' ? revenueCategories : expenseCategories;
+  static const List<Category> savingCategories = [
+    Category(icon: '🌾', label: 'Réserve prochaine saison'),
+    Category(icon: '🛡️', label: 'Imprévus'),
+    Category(icon: '🎓', label: 'Scolarité'),
+    Category(icon: '🎯', label: 'Projet / Équipement'),
+  ];
+
+  List<Category> get categories {
+    switch (widget.transactionType) {
+      case 'income':
+        return revenueCategories;
+      case 'saving':
+        return savingCategories;
+      default:
+        return expenseCategories;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -74,7 +74,12 @@ class TransactionModel {
   /// (exigence UX du cahier des charges : "Montants affichés sans
   /// troncature et avec un format monétaire cohérent").
   String get formattedAmount {
-    final prefix = type == TransactionType.income ? '+' : '-';
+    // L'épargne n'est ni un gain ni une perte : pas de signe.
+    final prefix = switch (type) {
+      TransactionType.income => '+',
+      TransactionType.expense => '-',
+      TransactionType.saving => '',
+    };
     final formatte = NumberFormat.decimalPattern('fr_FR').format(amountAriary);
     return '$prefix$formatte Ar';
   }

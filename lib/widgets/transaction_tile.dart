@@ -17,11 +17,27 @@ class TransactionTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final estRevenu = transaction.type == TransactionType.income;
+    final estEpargne = transaction.type == TransactionType.saving;
+    final couleurFond = estRevenu
+        ? AppColors.revBg
+        : estEpargne
+            ? AppColors.savBg
+            : AppColors.depBg;
+    final couleurLabel = estRevenu
+        ? AppColors.revText
+        : estEpargne
+            ? AppColors.savAmount
+            : AppColors.depText;
+    final couleurMontant = estRevenu
+        ? AppColors.revAmount
+        : estEpargne
+            ? AppColors.savAmount
+            : AppColors.depAmount;
     final dateFormatee = DateFormat('dd/MM/yyyy').format(transaction.date);
 
     // Utiliser les catégories du modèle ou des valeurs par défaut
-    final iconCategorie = transaction.iconeCategorie ?? (estRevenu ? '🌾' : '🛒');
-    final labelCategorie = transaction.categorie ?? (estRevenu ? 'Revenu' : 'Dépense');
+    final iconCategorie = transaction.iconeCategorie ?? (estRevenu ? '🌾' : estEpargne ? '🐖' : '🛒');
+    final labelCategorie = transaction.categorie ?? (estRevenu ? 'Revenu' : estEpargne ? 'Épargne' : 'Dépense');
 
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 0),
@@ -34,7 +50,7 @@ class TransactionTile extends StatelessWidget {
               width: 44,
               height: 44,
               decoration: BoxDecoration(
-                color: estRevenu ? AppColors.revBg : AppColors.depBg,
+                color: couleurFond,
                 borderRadius: BorderRadius.circular(10),
               ),
               child: Center(
@@ -61,14 +77,14 @@ class TransactionTile extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                     decoration: BoxDecoration(
-                      color: estRevenu ? AppColors.revBg : AppColors.depBg,
+                      color: couleurFond,
                       borderRadius: BorderRadius.circular(99),
                     ),
                     child: Text(
                       labelCategorie,
                       style: TextStyle(
                         fontSize: 10,
-                        color: estRevenu ? AppColors.revText : AppColors.depText,
+                        color: couleurLabel,
                       ),
                     ),
                   ),
@@ -81,7 +97,7 @@ class TransactionTile extends StatelessWidget {
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
-                color: estRevenu ? AppColors.revAmount : AppColors.depAmount,
+                color: couleurMontant,
               ),
             ),
           ],

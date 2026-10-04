@@ -133,13 +133,13 @@ class _AccueilScreenState extends State<AccueilScreen> {
                   ),
                 ),
                 const SizedBox(width: 8),
-                const Expanded(
+                Expanded(
                   child: _StatCard(
                     icone: Icons.savings_outlined,
                     iconeBg: AppColors.savBg,
                     iconeColor: AppColors.savAmount,
                     label: 'Épargne',
-                    valeur: 'Bientôt',
+                    valeur: _soldeVisible ? _formatAriary(provider.totalEpargne) : '••••',
                   ),
                 ),
               ],
