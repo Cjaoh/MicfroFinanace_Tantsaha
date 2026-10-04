@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
@@ -168,262 +169,309 @@ class _FinancesScreenState extends State<FinancesScreen> {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    final transactionProvider = Provider.of<TransactionProvider>(context);
-    final transactions = transactionProvider.transactions;
-    final solde = transactionProvider.balance;
-
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: AppColors.primary,
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'MICROFINANCE MALAGASY',
-              style: TextStyle(
-                fontSize: 10,
-                color: AppColors.subtleGreen,
-                letterSpacing: 1.5,
-              ),
-            ),
-            Text(
-              'Mes finances',
-              style: TextStyle(
-                fontSize: 20,
-                color: Colors.white,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
-        ),
-        toolbarHeight: 70,
+  /// Le bouton unique de la maquette : on choisit d'abord le type,
+  /// puis on réutilise le formulaire existant.
+  void _choisirTypeTransaction(TransactionProvider provider) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
-      body: SafeArea(
+      builder: (ctx) => SafeArea(
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           children: [
-
-            //══════════════════════════════════════
-            // SCROLLABLE BODY
-            //══════════════════════════════════════
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-
-                    //════════════════════════════
-                    // BLOC 2 — BALANCE CARD
-                    //════════════════════════════
-                    Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.symmetric(vertical: 28),
-                      child: Column(
-                        children: [
-                          Text('SOLDE TOTAL',
-                            style: TextStyle(fontSize: 10, letterSpacing: 1.5,
-                              color: AppColors.mutedText)),
-                          const SizedBox(height: 10),
-                          Container(
-                            width: 100, height: 100,
-                            decoration: BoxDecoration(
-                              color: AppColors.primary,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text('${_formatAriary(solde)}',
-                                  style: TextStyle(fontSize: 16, color: Colors.white,
-                                    fontWeight: FontWeight.w500)),
-                                Text('Ariary',
-                                  style: TextStyle(fontSize: 10, color: AppColors.subtleGreen)),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    //════════════════════════════
-                    // BLOC 3 — CARTES STATISTIQUES
-                    //════════════════════════════
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      child: Row(
-                        children: [
-                          // Carte Revenus
-                          Expanded(
-                            child: Card(
-                              child: Padding(
-                                padding: EdgeInsets.all(12),
-                                child: Column(
-                                  children: [
-                                    Text('Revenus', style: TextStyle(fontSize: 11,
-                                      color: AppColors.mutedText)),
-                                    Text('+ ${_formatAriary(transactionProvider.totalRevenus)}', style: TextStyle(fontSize: 14,
-                                      fontWeight: FontWeight.w500, color: AppColors.revAmount)),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          // Carte Dépenses
-                          Expanded(
-                            child: Card(
-                              child: Padding(
-                                padding: EdgeInsets.all(12),
-                                child: Column(
-                                  children: [
-                                    Text('Dépenses', style: TextStyle(fontSize: 11,
-                                      color: AppColors.mutedText)),
-                                    Text('- ${_formatAriary(transactionProvider.totalDepenses)}', style: TextStyle(fontSize: 14,
-                                      fontWeight: FontWeight.w500, color: AppColors.depAmount)),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          // Carte Balance
-                          Expanded(
-                            child: Card(
-                              child: Padding(
-                                padding: EdgeInsets.all(12),
-                                child: Column(
-                                  children: [
-                                    Text('Balance', style: TextStyle(fontSize: 11,
-                                      color: AppColors.mutedText)),
-                                    Text(_formatAriary(solde), style: TextStyle(fontSize: 14,
-                                      fontWeight: FontWeight.w500, color: AppColors.balText)),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    //════════════════════════════
-                    // BLOC 4 — ACTION BUTTONS
-                    //════════════════════════════
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(12, 14, 12, 4),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: ElevatedButton.icon(
-                              icon: const Icon(Icons.add, size: 16),
-                              label: const Text(
-                                "Ajouter revenu",
-                                style: TextStyle(fontSize: 13),
-                              ),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppColors.primary,
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(vertical: 14),
-                                shape: const StadiumBorder(),
-                                elevation: 0,
-                              ),
-                              onPressed: () => _ouvrirBottomSheet("Revenu", transactionProvider, context),
-                            ),
-                          ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: OutlinedButton.icon(
-                              icon: const Icon(Icons.remove, size: 16),
-                              label: const Text(
-                                "Ajouter dépense",
-                                style: TextStyle(fontSize: 13),
-                              ),
-                              style: OutlinedButton.styleFrom(
-                                foregroundColor: AppColors.mutedText,
-                                padding: const EdgeInsets.symmetric(vertical: 14),
-                                shape: const StadiumBorder(),
-                                side: const BorderSide(
-                                  color: AppColors.borderColor,
-                                  width: 1.2,
-                                ),
-                              ),
-                              onPressed: () => _ouvrirBottomSheet("Dépense", transactionProvider, context),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    //════════════════════════════
-                    // BLOC 5 — LISTE TRANSACTIONS
-                    //════════════════════════════
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 20, 16, 8),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          "HISTORIQUE",
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: AppColors.mutedText,
-                            fontWeight: FontWeight.bold,
-                            letterSpacing: 1.5,
-                          ),
-                        ),
-                      ),
-                    ),
-
-                    transactions.isEmpty
-                      ? Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 40),
-                          child: Text(
-                            "Aucune transaction pour l'instant",
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: AppColors.mutedText,
-                              fontStyle: FontStyle.italic,
-                            ),
-                          ),
-                        )
-                      : ListView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          padding: const EdgeInsets.symmetric(horizontal: 12),
-                          itemCount: transactions.length,
-                          itemBuilder: (_, index) {
-                            final tx = transactions[index];
-                            return Dismissible(
-                              key: Key(tx.id),
-                              direction: DismissDirection.endToStart,
-                              onDismissed: (_) {
-                                transactionProvider.removeTransaction(tx.id);
-                              },
-                              background: Container(
-                                alignment: Alignment.centerRight,
-                                margin: const EdgeInsets.symmetric(vertical: 4),
-                                padding: const EdgeInsets.only(right: 20),
-                                decoration: BoxDecoration(
-                                  color: Colors.red,
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: const Icon(Icons.delete, color: Colors.white),
-                              ),
-                              child: TransactionTile(
-                                transaction: tx,
-                                onDelete: () => transactionProvider.removeTransaction(tx.id),
-                              ),
-                            );
-                          },
-                        ),
-
-                    const SizedBox(height: 30),
-                  ],
-                ),
-              ),
+            const SizedBox(height: 12),
+            ListTile(
+              leading: const Icon(Icons.trending_up, color: AppColors.revAmount),
+              title: const Text('Ajouter un revenu'),
+              onTap: () {
+                Navigator.pop(ctx);
+                _ouvrirBottomSheet('Revenu', provider, context);
+              },
             ),
+            ListTile(
+              leading: const Icon(Icons.trending_down, color: AppColors.depAmount),
+              title: const Text('Ajouter une dépense'),
+              onTap: () {
+                Navigator.pop(ctx);
+                _ouvrirBottomSheet('Dépense', provider, context);
+              },
+            ),
+            const SizedBox(height: 12),
           ],
         ),
       ),
     );
   }
+
+  @override
+  Widget build(BuildContext context) {
+    final provider = context.watch<TransactionProvider>();
+
+    return DefaultTabController(
+      length: 3,
+      child: Scaffold(
+        appBar: AppBar(
+          centerTitle: true,
+          title: const Text('Mes finances',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+          bottom: const TabBar(
+            indicatorColor: Colors.white,
+            labelColor: Colors.white,
+            unselectedLabelColor: AppColors.subtleGreen,
+            tabs: [
+              Tab(text: 'Synthèse'),
+              Tab(text: 'Transactions'),
+              Tab(text: 'Épargne'),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          children: [
+            _buildSynthese(provider),
+            _buildTransactions(provider),
+            const _EpargnePlaceholder(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // ───────────── Onglet 1 : Synthèse ─────────────
+  Widget _buildSynthese(TransactionProvider provider) {
+    final revenus = provider.totalRevenus;
+    final depenses = provider.totalDepenses;
+    final total = revenus + depenses;
+    int pct(int v) => total == 0 ? 0 : (v * 100 / total).round();
+
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        Card(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Solde actuel',
+                    style: TextStyle(fontSize: 12, color: AppColors.mutedText)),
+                const SizedBox(height: 6),
+                Text(_formatAriary(provider.balance),
+                    style: const TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.accentText)),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 12),
+        Card(
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                SizedBox(
+                  width: 120,
+                  height: 120,
+                  child: CustomPaint(
+                    painter: _DonutPainter(
+                      segments: [
+                        _Segment(revenus.toDouble(), AppColors.revAmount),
+                        _Segment(depenses.toDouble(), AppColors.depAmount),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    children: [
+                      _LegendRow(
+                        color: AppColors.revAmount,
+                        label: 'Revenus',
+                        valeur: _formatAriary(revenus),
+                        pct: pct(revenus),
+                      ),
+                      const SizedBox(height: 12),
+                      _LegendRow(
+                        color: AppColors.depAmount,
+                        label: 'Dépenses',
+                        valeur: _formatAriary(depenses),
+                        pct: pct(depenses),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 20),
+        SizedBox(
+          width: double.infinity,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: 14),
+            ),
+            onPressed: () => _choisirTypeTransaction(provider),
+            child: const Text('Ajouter une transaction',
+                style: TextStyle(fontSize: 15)),
+          ),
+        ),
+      ],
+    );
+  }
+
+  // ───────────── Onglet 2 : Transactions ─────────────
+  Widget _buildTransactions(TransactionProvider provider) {
+    final transactions = provider.transactions;
+
+    if (transactions.isEmpty) {
+      return const Center(
+        child: Text("Aucune transaction pour l'instant",
+            style: TextStyle(color: AppColors.mutedText)),
+      );
+    }
+
+    return ListView.builder(
+      padding: const EdgeInsets.all(12),
+      itemCount: transactions.length,
+      itemBuilder: (_, index) {
+        final tx = transactions[index];
+        return Dismissible(
+          key: Key(tx.id),
+          direction: DismissDirection.endToStart,
+          onDismissed: (_) => provider.removeTransaction(tx.id),
+          background: Container(
+            alignment: Alignment.centerRight,
+            margin: const EdgeInsets.symmetric(vertical: 4),
+            padding: const EdgeInsets.only(right: 20),
+            decoration: BoxDecoration(
+              color: AppColors.depAmount,
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: const Icon(Icons.delete, color: Colors.white),
+          ),
+          child: TransactionTile(
+            transaction: tx,
+            onDelete: () => provider.removeTransaction(tx.id),
+          ),
+        );
+      },
+    );
+  }
+}
+
+// ───────────── Onglet 3 : Épargne (sous-étape 3b) ─────────────
+class _EpargnePlaceholder extends StatelessWidget {
+  const _EpargnePlaceholder();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Padding(
+        padding: EdgeInsets.all(32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.savings_outlined, size: 40, color: AppColors.savAmount),
+            SizedBox(height: 12),
+            Text("Le suivi de l'épargne arrive bientôt.",
+                textAlign: TextAlign.center,
+                style: TextStyle(color: AppColors.mutedText)),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _LegendRow extends StatelessWidget {
+  final Color color;
+  final String label;
+  final String valeur;
+  final int pct;
+
+  const _LegendRow({
+    required this.color,
+    required this.label,
+    required this.valeur,
+    required this.pct,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        Container(
+          width: 10,
+          height: 10,
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(label,
+              style: const TextStyle(fontSize: 12, color: AppColors.mutedText)),
+        ),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text(valeur,
+                style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.accentText)),
+            Text('($pct%)',
+                style: const TextStyle(fontSize: 10, color: AppColors.mutedText)),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _Segment {
+  final double value;
+  final Color color;
+  const _Segment(this.value, this.color);
+}
+
+/// Donut dessiné à la main (CustomPainter) : pas de dépendance en plus.
+class _DonutPainter extends CustomPainter {
+  final List<_Segment> segments;
+  const _DonutPainter({required this.segments});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    const stroke = 22.0;
+    final rect = Offset(stroke / 2, stroke / 2) &
+        Size(size.width - stroke, size.height - stroke);
+    final paint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = stroke;
+
+    final total = segments.fold<double>(0, (sum, s) => sum + s.value);
+
+    // Aucune donnée : anneau gris neutre.
+    if (total <= 0) {
+      paint.color = AppColors.borderColor;
+      canvas.drawArc(rect, 0, 2 * math.pi, false, paint);
+      return;
+    }
+
+    var start = -math.pi / 2;
+    for (final s in segments) {
+      if (s.value <= 0) continue;
+      final sweep = 2 * math.pi * (s.value / total);
+      paint.color = s.color;
+      canvas.drawArc(rect, start, sweep, false, paint);
+      start += sweep;
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _DonutPainter old) => old.segments != segments;
 }
