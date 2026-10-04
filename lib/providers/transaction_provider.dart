@@ -23,6 +23,7 @@ class TransactionProvider with ChangeNotifier {
   // chaque lecture.
   int _totalRevenus = 0;
   int _totalDepenses = 0;
+  int _totalEpargne = 0;
   bool _isLoading = false;
 
   /// Vue en lecture seule : l'UI ne peut pas modifier la liste directement.
@@ -31,7 +32,11 @@ class TransactionProvider with ChangeNotifier {
 
   int get totalRevenus => _totalRevenus;
   int get totalDepenses => _totalDepenses;
-  int get balance => _totalRevenus - _totalDepenses;
+  int get totalEpargne => _totalEpargne;
+
+  /// Argent disponible : ce qui est mis de côté en épargne n'est plus
+  /// dépensable, donc on le retire du solde.
+  int get balance => _totalRevenus - _totalDepenses - _totalEpargne;
   bool get isLoading => _isLoading;
 
   /// Charge les transactions depuis SQLite (à appeler au démarrage).
@@ -88,14 +93,21 @@ class TransactionProvider with ChangeNotifier {
   void _recalculateTotals() {
     var revenus = 0;
     var depenses = 0;
+    var epargne = 0;
     for (final transaction in _transactions) {
-      if (transaction.type == TransactionType.income) {
-        revenus += transaction.amountAriary;
-      } else {
-        depenses += transaction.amountAriary;
+      // switch exhaustif : si on ajoute un type un jour, le compilateur
+      // nous obligera à décider comment il compte dans les totaux.
+      switch (transaction.type) {
+        case TransactionType.income:
+          revenus += transaction.amountAriary;
+        case TransactionType.expense:
+          depenses += transaction.amountAriary;
+        case TransactionType.saving:
+          epargne += transaction.amountAriary;
       }
     }
     _totalRevenus = revenus;
     _totalDepenses = depenses;
+    _totalEpargne = epargne;
   }
 }

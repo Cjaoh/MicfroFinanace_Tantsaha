@@ -15,7 +15,7 @@ class AppDatabase {
   factory AppDatabase.forTesting(String path) => AppDatabase._(path);
 
   static const String _dbName = 'tantsaha.db';
-  static const int _dbVersion = 1;
+  static const int _dbVersion = 2;
 
   static const String transactionsTable = 'transactions';
 
@@ -33,6 +33,7 @@ class AppDatabase {
       version: _dbVersion,
       onConfigure: _onConfigure,
       onCreate: _onCreate,
+      onUpgrade: _onUpgrade,
     );
     _database = db;
     return db;
@@ -44,21 +45,50 @@ class AppDatabase {
     await db.execute('PRAGMA foreign_keys = ON');
   }
 
-  Future<void> _onCreate(Database db, int version) async {
-    await db.execute('''
-      CREATE TABLE $transactionsTable (
-        id TEXT PRIMARY KEY,
-        amount_ariary INTEGER NOT NULL CHECK (amount_ariary > 0),
-        type TEXT NOT NULL CHECK (type IN ('income', 'expense')),
-        date INTEGER NOT NULL,
-        categorie TEXT,
-        icone_categorie TEXT
-      )
-    ''');
+  // Schéma de la table des transactions (version 2 : ajout du type 'saving').
+  static const String _createTransactionsSql = '''
+    CREATE TABLE $transactionsTable (
+      id TEXT PRIMARY KEY,
+      amount_ariary INTEGER NOT NULL CHECK (amount_ariary > 0),
+      type TEXT NOT NULL CHECK (type IN ('income', 'expense', 'saving')),
+      date INTEGER NOT NULL,
+      categorie TEXT,
+      icone_categorie TEXT
+    )
+  ''';
 
-    await db.execute(
-      'CREATE INDEX idx_transactions_date ON $transactionsTable (date)',
-    );
+  static const String _createDateIndexSql =
+      'CREATE INDEX idx_transactions_date ON $transactionsTable (date)';
+
+  Future<void> _onCreate(Database db, int version) async {
+    await db.execute(_createTransactionsSql);
+    await db.execute(_createDateIndexSql);
+  }
+
+  /// Migrations successives. Chaque `if (oldVersion < N)` ne s'exécute que
+  /// pour les bases plus anciennes que N : une base déjà à jour n'est pas
+  /// touchée, et une base très ancienne passe par toutes les étapes.
+  ///
+  /// Important : sqflite exécute déjà onUpgrade dans une transaction.
+  /// On n'ouvre donc PAS db.transaction() ici (risque de blocage).
+  Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      // SQLite ne permet pas de modifier une contrainte CHECK existante :
+      // on recrée la table, on recopie les données, puis on supprime
+      // l'ancienne. Les transactions déjà saisies sont conservées.
+      await db.execute(
+        'ALTER TABLE $transactionsTable RENAME TO transactions_old',
+      );
+      await db.execute(_createTransactionsSql);
+      await db.execute('''
+        INSERT INTO $transactionsTable
+          (id, amount_ariary, type, date, categorie, icone_categorie)
+        SELECT id, amount_ariary, type, date, categorie, icone_categorie
+        FROM transactions_old
+      ''');
+      await db.execute('DROP TABLE transactions_old');
+      await db.execute(_createDateIndexSql);
+    }
   }
 
   /// Ferme la connexion (utile pour les tests).

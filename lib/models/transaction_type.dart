@@ -6,7 +6,8 @@
 /// tout simplement plus être créée : le compilateur l'empêche.
 enum TransactionType {
   income,
-  expense;
+  expense,
+  saving;
 
   /// Valeur stockée en base (SQLite/PostgreSQL) et échangée avec l'API.
   /// On garde une valeur stable et explicite, indépendante du nom Dart de
@@ -18,6 +19,8 @@ enum TransactionType {
         return 'income';
       case TransactionType.expense:
         return 'expense';
+      case TransactionType.saving:
+        return 'saving';
     }
   }
 
@@ -30,6 +33,8 @@ enum TransactionType {
         return TransactionType.income;
       case 'expense':
         return TransactionType.expense;
+      case 'saving':
+        return TransactionType.saving;
       default:
         throw ArgumentError('Type de transaction inconnu : "$value"');
     }
