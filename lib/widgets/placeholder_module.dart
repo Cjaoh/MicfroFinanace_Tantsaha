@@ -39,7 +39,7 @@ class PlaceholderModule extends StatelessWidget {
             Text(
               description,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 13, color: AppColors.mutedText),
+              style: const TextStyle(fontSize: 13, color: AppColors.mutedText),
             ),
           ],
         ),

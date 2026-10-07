@@ -1,0 +1,15 @@
+{
+  "@@locale": "mg",
+  "appTitle": "Tantsaha",
+  "@appTitle": { "description": "Nom de l'application" },
+  "navHome": "Fandraisana",
+  "@navHome": { "description": "Onglet Accueil (tableau de bord)" },
+  "navFarm": "Fambolena",
+  "@navFarm": { "description": "Onglet Exploitation" },
+  "navFinances": "Vola",
+  "@navFinances": { "description": "Onglet Finances" },
+  "navMarket": "Tsena",
+  "@navMarket": { "description": "Onglet Marché" },
+  "navProfile": "Momba ahy",
+  "@navProfile": { "description": "Onglet Profil" }
+}

@@ -20,9 +20,11 @@ dependencies:
 
   # 🔢 Utilitaires
   cupertino_icons: ^1.0.8  # Icônes iOS (optionnel, mais utile)
-  intl: ^0.19.0  # Pour le formatage des nombres et dates
+  intl: any  # Pour le formatage des nombres et dates
   sqflite: ^2.4.4
   path: ^1.9.1
+  flutter_localizations:
+    sdk: flutter
 
 # --- Dépendances de développement ---
 dev_dependencies:
@@ -37,6 +39,7 @@ dev_dependencies:
 flutter:
   # Utilise les icônes Material Design
   uses-material-design: true
+  generate: true
 
   # 📁 Assets (si tu veux ajouter des images ou polices personnalisées)
   # Exemple :

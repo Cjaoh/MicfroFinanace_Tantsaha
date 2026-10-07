@@ -65,7 +65,7 @@ class _CategoryPickerState extends State<CategoryPicker> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(
+          const Text(
             'Sélectionner une catégorie',
             style: TextStyle(
               fontSize: 16,
@@ -114,7 +114,7 @@ class _CategoryPickerState extends State<CategoryPicker> {
                       Expanded(
                         child: Text(
                           category.label,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 12,
                             color: AppColors.accentText,
                           ),

@@ -35,15 +35,15 @@ class _AccueilScreenState extends State<AccueilScreen> {
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
           children: [
             // En-tête : avatar + salutation + cloche
-            Row(
+            const Row(
               children: [
-                const CircleAvatar(
+                CircleAvatar(
                   radius: 22,
                   backgroundColor: AppColors.revBg,
                   child: Icon(Icons.person, color: AppColors.primary),
                 ),
-                const SizedBox(width: 12),
-                const Expanded(
+                SizedBox(width: 12),
+                Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -63,7 +63,7 @@ class _AccueilScreenState extends State<AccueilScreen> {
                     ],
                   ),
                 ),
-                const Icon(Icons.notifications_outlined, color: AppColors.primary),
+                Icon(Icons.notifications_outlined, color: AppColors.primary),
               ],
             ),
             const SizedBox(height: 20),

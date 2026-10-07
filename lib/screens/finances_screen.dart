@@ -47,9 +47,9 @@ class _FinancesScreenState extends State<FinancesScreen> {
       backgroundColor: Colors.transparent,
       builder: (ctx) => StatefulBuilder(
         builder: (context, setModalState) => Container(
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             color: AppColors.white,
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
           ),
           padding: EdgeInsets.only(
             bottom: MediaQuery.of(context).viewInsets.bottom + 28,
@@ -78,7 +78,7 @@ class _FinancesScreenState extends State<FinancesScreen> {
                     : type == "Épargne"
                         ? "Mettre de côté"
                         : "Nouvelle dépense",
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w500,
                   color: AppColors.primary,
@@ -108,15 +108,15 @@ class _FinancesScreenState extends State<FinancesScreen> {
                   errorText: errorText,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: AppColors.borderColor),
+                    borderSide: const BorderSide(color: AppColors.borderColor),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: AppColors.borderColor),
+                    borderSide: const BorderSide(color: AppColors.borderColor),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: AppColors.primary, width: 1.5),
+                    borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
                   ),
                 ),
               ),
@@ -129,15 +129,15 @@ class _FinancesScreenState extends State<FinancesScreen> {
                   hintText: "Description (optionnel)",
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: AppColors.borderColor),
+                    borderSide: const BorderSide(color: AppColors.borderColor),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: AppColors.borderColor),
+                    borderSide: const BorderSide(color: AppColors.borderColor),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: AppColors.primary, width: 1.5),
+                    borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
                   ),
                 ),
               ),
@@ -536,7 +536,7 @@ class _DonutPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     const stroke = 22.0;
-    final rect = Offset(stroke / 2, stroke / 2) &
+    final rect = const Offset(stroke / 2, stroke / 2) &
         Size(size.width - stroke, size.height - stroke);
     final paint = Paint()
       ..style = PaintingStyle.stroke
