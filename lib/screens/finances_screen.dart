@@ -8,6 +8,7 @@ import '../models/transaction_type.dart';
 import '../core/app_theme.dart';
 import '../widgets/transaction_tile.dart';
 import '../widgets/category_picker.dart';
+import 'transaction/choose_type_screen.dart';
 
 /// Libellé du formulaire -> type métier.
 TransactionType _typeFrom(String libelle) {
@@ -185,47 +186,12 @@ class _FinancesScreenState extends State<FinancesScreen> {
     );
   }
 
-  /// Le bouton unique de la maquette : on choisit d'abord le type,
-  /// puis on réutilise le formulaire existant.
+  /// Parcours Finances : type -> catégorie -> détail.
   void _choisirTypeTransaction(TransactionProvider provider) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: AppColors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (ctx) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const SizedBox(height: 12),
-            ListTile(
-              leading: const Icon(Icons.trending_up, color: AppColors.revAmount),
-              title: const Text('Ajouter un revenu'),
-              onTap: () {
-                Navigator.pop(ctx);
-                _ouvrirBottomSheet('Revenu', provider, context);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.trending_down, color: AppColors.depAmount),
-              title: const Text('Ajouter une dépense'),
-              onTap: () {
-                Navigator.pop(ctx);
-                _ouvrirBottomSheet('Dépense', provider, context);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.savings_outlined, color: AppColors.savAmount),
-              title: const Text('Mettre de l\'argent de côté'),
-              onTap: () {
-                Navigator.pop(ctx);
-                _ouvrirBottomSheet('Épargne', provider, context);
-              },
-            ),
-            const SizedBox(height: 12),
-          ],
-        ),
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const ChooseTypeScreen(),
       ),
     );
   }
