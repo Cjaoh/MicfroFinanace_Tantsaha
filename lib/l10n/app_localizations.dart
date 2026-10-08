@@ -133,6 +133,204 @@ abstract class AppLocalizations {
   /// In mg, this message translates to:
   /// **'Momba ahy'**
   String get navProfile;
+
+  /// No description provided for @dashGreeting.
+  ///
+  /// In mg, this message translates to:
+  /// **'Manao ahoana !'**
+  String get dashGreeting;
+
+  /// No description provided for @dashEncouragement.
+  ///
+  /// In mg, this message translates to:
+  /// **'Mandrosoa amin\'ny asa fambolenao !'**
+  String get dashEncouragement;
+
+  /// No description provided for @dashBalanceLabel.
+  ///
+  /// In mg, this message translates to:
+  /// **'Ny vola misy anao'**
+  String get dashBalanceLabel;
+
+  /// No description provided for @dashHideBalance.
+  ///
+  /// In mg, this message translates to:
+  /// **'Afenina ny vola'**
+  String get dashHideBalance;
+
+  /// No description provided for @dashShowBalance.
+  ///
+  /// In mg, this message translates to:
+  /// **'Asehoy ny vola'**
+  String get dashShowBalance;
+
+  /// No description provided for @dashRevenue.
+  ///
+  /// In mg, this message translates to:
+  /// **'Fidiram-bola'**
+  String get dashRevenue;
+
+  /// No description provided for @dashExpenses.
+  ///
+  /// In mg, this message translates to:
+  /// **'Fandaniana'**
+  String get dashExpenses;
+
+  /// No description provided for @dashSavings.
+  ///
+  /// In mg, this message translates to:
+  /// **'Tahiry'**
+  String get dashSavings;
+
+  /// No description provided for @dashMyFarms.
+  ///
+  /// In mg, this message translates to:
+  /// **'Ny fambolenako'**
+  String get dashMyFarms;
+
+  /// No description provided for @dashUpcomingEvents.
+  ///
+  /// In mg, this message translates to:
+  /// **'Ny hetsika manaraka'**
+  String get dashUpcomingEvents;
+
+  /// No description provided for @dashEmptyFarms.
+  ///
+  /// In mg, this message translates to:
+  /// **'Tsy misy fambolena voarakitra mbola.'**
+  String get dashEmptyFarms;
+
+  /// No description provided for @dashEmptyEvents.
+  ///
+  /// In mg, this message translates to:
+  /// **'Tsy misy hetsika mbola.'**
+  String get dashEmptyEvents;
+
+  /// No description provided for @dashSeeAll.
+  ///
+  /// In mg, this message translates to:
+  /// **'Jereo rehetra'**
+  String get dashSeeAll;
+
+  /// No description provided for @finTitle.
+  ///
+  /// In mg, this message translates to:
+  /// **'Ny volako'**
+  String get finTitle;
+
+  /// No description provided for @finBalanceNow.
+  ///
+  /// In mg, this message translates to:
+  /// **'Vola misy ankehitriny'**
+  String get finBalanceNow;
+
+  /// No description provided for @finTabSummary.
+  ///
+  /// In mg, this message translates to:
+  /// **'Fintinana'**
+  String get finTabSummary;
+
+  /// No description provided for @finTabTransactions.
+  ///
+  /// In mg, this message translates to:
+  /// **'Fifampiraharahana'**
+  String get finTabTransactions;
+
+  /// No description provided for @finTabSavings.
+  ///
+  /// In mg, this message translates to:
+  /// **'Tahiry'**
+  String get finTabSavings;
+
+  /// No description provided for @finAddTransaction.
+  ///
+  /// In mg, this message translates to:
+  /// **'Ampidiro fifampiraharahana'**
+  String get finAddTransaction;
+
+  /// No description provided for @finEmptyTransactions.
+  ///
+  /// In mg, this message translates to:
+  /// **'Tsy misy fifampiraharahana mbola.'**
+  String get finEmptyTransactions;
+
+  /// No description provided for @finEmptySavings.
+  ///
+  /// In mg, this message translates to:
+  /// **'Tsy misy tahiry mbola.'**
+  String get finEmptySavings;
+
+  /// No description provided for @finTotalSaved.
+  ///
+  /// In mg, this message translates to:
+  /// **'Tahiry rehetra'**
+  String get finTotalSaved;
+
+  /// No description provided for @finSetAside.
+  ///
+  /// In mg, this message translates to:
+  /// **'Apetraka tahiry'**
+  String get finSetAside;
+
+  /// No description provided for @finAddIncome.
+  ///
+  /// In mg, this message translates to:
+  /// **'Ampidiro fidiram-bola'**
+  String get finAddIncome;
+
+  /// No description provided for @finAddExpense.
+  ///
+  /// In mg, this message translates to:
+  /// **'Ampidiro fandaniana'**
+  String get finAddExpense;
+
+  /// No description provided for @finNewIncome.
+  ///
+  /// In mg, this message translates to:
+  /// **'Fidiram-bola vaovao'**
+  String get finNewIncome;
+
+  /// No description provided for @finNewExpense.
+  ///
+  /// In mg, this message translates to:
+  /// **'Fandaniana vaovao'**
+  String get finNewExpense;
+
+  /// No description provided for @finNewSaving.
+  ///
+  /// In mg, this message translates to:
+  /// **'Apetraka tahiry vaovao'**
+  String get finNewSaving;
+
+  /// No description provided for @finAmountHint.
+  ///
+  /// In mg, this message translates to:
+  /// **'Vola amin\'ny Ariary'**
+  String get finAmountHint;
+
+  /// No description provided for @finDescriptionHint.
+  ///
+  /// In mg, this message translates to:
+  /// **'Famaritana (tsy voatery)'**
+  String get finDescriptionHint;
+
+  /// No description provided for @finErrorAmount.
+  ///
+  /// In mg, this message translates to:
+  /// **'Ampidiro vola marina'**
+  String get finErrorAmount;
+
+  /// No description provided for @finErrorCategory.
+  ///
+  /// In mg, this message translates to:
+  /// **'Safidio sokajy'**
+  String get finErrorCategory;
+
+  /// No description provided for @finConfirm.
+  ///
+  /// In mg, this message translates to:
+  /// **'Hamarino'**
+  String get finConfirm;
 }
 
 class _AppLocalizationsDelegate

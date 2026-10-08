@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../core/app_theme.dart';
+import '../l10n/app_localizations.dart';
 import '../providers/transaction_provider.dart';
 
 /// Écran 3 de la maquette : Tableau de bord.
@@ -10,6 +11,7 @@ import '../providers/transaction_provider.dart';
 /// Les sections "Mes exploitations" et "Prochains événements" restent en
 /// état vide tant que les modules correspondants n'existent pas : on
 /// n'affiche jamais de données inventées.
+/// Tous les textes viennent de AppLocalizations (malagasy par défaut).
 class AccueilScreen extends StatefulWidget {
   const AccueilScreen({super.key});
 
@@ -28,6 +30,7 @@ class _AccueilScreenState extends State<AccueilScreen> {
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<TransactionProvider>();
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       body: SafeArea(
@@ -35,35 +38,35 @@ class _AccueilScreenState extends State<AccueilScreen> {
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
           children: [
             // En-tête : avatar + salutation + cloche
-            const Row(
+            Row(
               children: [
-                CircleAvatar(
+                const CircleAvatar(
                   radius: 22,
                   backgroundColor: AppColors.revBg,
                   child: Icon(Icons.person, color: AppColors.primary),
                 ),
-                SizedBox(width: 12),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Bonjour !',
-                        style: TextStyle(
+                        l10n.dashGreeting,
+                        style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
                           color: AppColors.accentText,
                         ),
                       ),
-                      SizedBox(height: 2),
+                      const SizedBox(height: 2),
                       Text(
-                        'Bon courage pour vos cultures !',
-                        style: TextStyle(fontSize: 12, color: AppColors.mutedText),
+                        l10n.dashEncouragement,
+                        style: const TextStyle(fontSize: 12, color: AppColors.mutedText),
                       ),
                     ],
                   ),
                 ),
-                Icon(Icons.notifications_outlined, color: AppColors.primary),
+                const Icon(Icons.notifications_outlined, color: AppColors.primary),
               ],
             ),
             const SizedBox(height: 20),
@@ -82,9 +85,9 @@ class _AccueilScreenState extends State<AccueilScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'Solde de votre compte',
-                        style: TextStyle(fontSize: 12, color: AppColors.subtleGreen),
+                      Text(
+                        l10n.dashBalanceLabel,
+                        style: const TextStyle(fontSize: 12, color: AppColors.subtleGreen),
                       ),
                       const SizedBox(height: 8),
                       Text(
@@ -99,7 +102,7 @@ class _AccueilScreenState extends State<AccueilScreen> {
                   ),
                   IconButton(
                     onPressed: () => setState(() => _soldeVisible = !_soldeVisible),
-                    tooltip: _soldeVisible ? 'Masquer le solde' : 'Afficher le solde',
+                    tooltip: _soldeVisible ? l10n.dashHideBalance : l10n.dashShowBalance,
                     icon: Icon(
                       _soldeVisible ? Icons.visibility_outlined : Icons.visibility_off_outlined,
                       color: Colors.white,
@@ -118,7 +121,7 @@ class _AccueilScreenState extends State<AccueilScreen> {
                     icone: Icons.trending_up,
                     iconeBg: AppColors.revBg,
                     iconeColor: AppColors.revAmount,
-                    label: 'Revenus',
+                    label: l10n.dashRevenue,
                     valeur: _soldeVisible ? _formatAriary(provider.totalRevenus) : '••••',
                   ),
                 ),
@@ -128,7 +131,7 @@ class _AccueilScreenState extends State<AccueilScreen> {
                     icone: Icons.trending_down,
                     iconeBg: AppColors.depBg,
                     iconeColor: AppColors.depAmount,
-                    label: 'Dépenses',
+                    label: l10n.dashExpenses,
                     valeur: _soldeVisible ? _formatAriary(provider.totalDepenses) : '••••',
                   ),
                 ),
@@ -138,7 +141,7 @@ class _AccueilScreenState extends State<AccueilScreen> {
                     icone: Icons.savings_outlined,
                     iconeBg: AppColors.savBg,
                     iconeColor: AppColors.savAmount,
-                    label: 'Épargne',
+                    label: l10n.dashSavings,
                     valeur: _soldeVisible ? _formatAriary(provider.totalEpargne) : '••••',
                   ),
                 ),
@@ -146,19 +149,19 @@ class _AccueilScreenState extends State<AccueilScreen> {
             ),
             const SizedBox(height: 24),
 
-            const _SectionHeader(titre: 'Mes exploitations'),
+            _SectionHeader(titre: l10n.dashMyFarms),
             const SizedBox(height: 8),
-            const _EmptyStateCard(
+            _EmptyStateCard(
               icone: Icons.agriculture_outlined,
-              message: "Aucune exploitation enregistrée pour l'instant.",
+              message: l10n.dashEmptyFarms,
             ),
             const SizedBox(height: 24),
 
-            const _SectionHeader(titre: 'Prochains événements'),
+            _SectionHeader(titre: l10n.dashUpcomingEvents),
             const SizedBox(height: 8),
-            const _EmptyStateCard(
+            _EmptyStateCard(
               icone: Icons.event_outlined,
-              message: "Aucun événement pour l'instant.",
+              message: l10n.dashEmptyEvents,
             ),
           ],
         ),
@@ -221,6 +224,8 @@ class _SectionHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -233,9 +238,9 @@ class _SectionHeader extends StatelessWidget {
           ),
         ),
         // "Voir tout" désactivé tant qu'il n'y a rien à voir.
-        const TextButton(
+        TextButton(
           onPressed: null,
-          child: Text('Voir tout', style: TextStyle(fontSize: 12)),
+          child: Text(l10n.dashSeeAll, style: const TextStyle(fontSize: 12)),
         ),
       ],
     );
