@@ -7,20 +7,8 @@ import '../models/transaction_model.dart';
 import '../models/transaction_type.dart';
 import '../core/app_theme.dart';
 import '../widgets/transaction_tile.dart';
-import '../widgets/category_picker.dart';
 import 'transaction/choose_type_screen.dart';
 
-/// Libellé du formulaire -> type métier.
-TransactionType _typeFrom(String libelle) {
-  switch (libelle) {
-    case 'Revenu':
-      return TransactionType.income;
-    case 'Épargne':
-      return TransactionType.saving;
-    default:
-      return TransactionType.expense;
-  }
-}
 
 class FinancesScreen extends StatefulWidget {
   const FinancesScreen({super.key});
@@ -33,157 +21,6 @@ class _FinancesScreenState extends State<FinancesScreen> {
 
   String _formatAriary(int montant) {
     return '${NumberFormat('#,###', 'fr_FR').format(montant).replaceAll(',', ' ')} Ar';
-  }
-
-  void _ouvrirBottomSheet(String type, TransactionProvider provider, BuildContext context) {
-    final TextEditingController amountController = TextEditingController();
-    final TextEditingController descriptionController = TextEditingController();
-    String? selectedCategory;
-    String? selectedIcon;
-    String? errorText;
-
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.transparent,
-      builder: (ctx) => StatefulBuilder(
-        builder: (context, setModalState) => Container(
-          decoration: const BoxDecoration(
-            color: AppColors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-          ),
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom + 28,
-            left: 24,
-            right: 24,
-            top: 16,
-          ),
-          child: SingleChildScrollView(
-            child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Handle bar
-              Container(
-                width: 44, height: 4,
-                decoration: BoxDecoration(
-                  color: AppColors.borderColor,
-                  borderRadius: BorderRadius.circular(2),
-                ),
-              ),
-              const SizedBox(height: 22),
-
-              // Titre
-              Text(
-                type == "Revenu"
-                    ? "Nouveau revenu"
-                    : type == "Épargne"
-                        ? "Mettre de côté"
-                        : "Nouvelle dépense",
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.primary,
-                ),
-              ),
-              const SizedBox(height: 22),
-
-              // Category Picker
-              CategoryPicker(
-                transactionType: _typeFrom(type).toDbValue(),
-                onCategorySelected: (category) {
-                  setModalState(() {
-                    selectedCategory = category.label;
-                    selectedIcon = category.icon;
-                  });
-                },
-              ),
-              const SizedBox(height: 16),
-
-              // TextField montant
-              TextField(
-                controller: amountController,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  hintText: "Montant en Ariary",
-                  suffixText: "Ar",
-                  errorText: errorText,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: AppColors.borderColor),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: AppColors.borderColor),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 12),
-
-              // TextField description (optionnel)
-              TextField(
-                controller: descriptionController,
-                decoration: InputDecoration(
-                  hintText: "Description (optionnel)",
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: AppColors.borderColor),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: AppColors.borderColor),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 18),
-
-              // Bouton Confirmer
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () {
-                    // Ariary : montant entier, pas de décimales (RM-01, RM-03).
-                    final val = int.tryParse(amountController.text.trim());
-                    if (val == null || val <= 0) {
-                      setModalState(() => errorText = "Entrez un montant valide");
-                      return;
-                    }
-                    if (selectedCategory == null || selectedIcon == null) {
-                      setModalState(() => errorText = "Sélectionnez une catégorie");
-                      return;
-                    }
-
-                    // Créer la transaction avec les catégories
-                    final transaction = TransactionModel.create(
-                      amountAriary: val,
-                      type: _typeFrom(type),
-                      date: DateTime.now(),
-                      categorie: selectedCategory,
-                      iconeCategorie: selectedIcon,
-                    );
-
-                    provider.addTransaction(transaction);
-                    Navigator.pop(context);
-                  },
-                  child: const Text(
-                    "Confirmer",
-                    style: TextStyle(fontSize: 16),
-                  ),
-                ),
-              ),
-            ],
-            ),
-          ),
-        ),
-      ),
-    );
   }
 
   /// Parcours Finances : type -> catégorie -> détail.
@@ -392,7 +229,7 @@ class _FinancesScreenState extends State<FinancesScreen> {
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 14),
               ),
-              onPressed: () => _ouvrirBottomSheet('Épargne', provider, context),
+              onPressed: () => _choisirTypeTransaction(provider),
               child: const Text("Mettre de l'argent de côté",
                   style: TextStyle(fontSize: 15)),
             ),

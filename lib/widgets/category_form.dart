@@ -95,7 +95,7 @@ class _CategoryFormState extends State<CategoryForm> {
 
     return switch (field) {
       ChoiceFieldDef(:final options) => DropdownButtonFormField<String>(
-          value: _values[field.key]!.isEmpty ? null : _values[field.key],
+          initialValue: _values[field.key]!.isEmpty ? null : _values[field.key],
           decoration: decoration,
           items: [
             for (final option in options)
