@@ -45,7 +45,7 @@ Map<String, FieldError> validateCategoryValues(CategorySchema schema, RawValues 
       case ChoiceFieldDef(:final options):
         if (!options.contains(raw)) errors[field.key] = FieldError.invalidChoice;
       case DateFieldDef():
-        if (DateTime.tryParse(raw) == null) errors[field.key] = FieldError.invalidDate;
+        if (!_isValidIsoDate(raw)) errors[field.key] = FieldError.invalidDate;
     }
   }
 
@@ -75,4 +75,18 @@ BigInt _productOf(CategorySchema schema, RawValues values) {
     total *= BigInt.from(int.parse(values[key]!.trim()));
   }
   return total;
+}/// Accepte uniquement une date réelle au format AAAA-MM-JJ.
+/// Rejette par exemple 2026-13-45 ou 2026-02-30.
+bool _isValidIsoDate(String raw) {
+  final match = RegExp(r'^(\d{4})-(\d{2})-(\d{2})$').firstMatch(raw);
+  if (match == null) return false;
+
+  final year = int.parse(match.group(1)!);
+  final month = int.parse(match.group(2)!);
+  final day = int.parse(match.group(3)!);
+
+  // DateTime corrige silencieusement les dates impossibles (ex. 02-30 devient 03-02).
+  // On vérifie donc que la date construite correspond exactement à la saisie.
+  final date = DateTime(year, month, day);
+  return date.year == year && date.month == month && date.day == day;
 }
