@@ -7,7 +7,7 @@ import '../models/transaction_model.dart';
 import '../models/transaction_type.dart';
 import '../core/app_theme.dart';
 import '../widgets/transaction_tile.dart';
-import 'transaction/choose_type_screen.dart';
+import 'transaction/choose_category_screen.dart';
 
 
 class FinancesScreen extends StatefulWidget {
@@ -21,16 +21,6 @@ class _FinancesScreenState extends State<FinancesScreen> {
 
   String _formatAriary(int montant) {
     return '${NumberFormat('#,###', 'fr_FR').format(montant).replaceAll(',', ' ')} Ar';
-  }
-
-  /// Parcours Finances : type -> catégorie -> détail.
-  void _choisirTypeTransaction(TransactionProvider provider) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => const ChooseTypeScreen(),
-      ),
-    );
   }
 
   @override
@@ -152,7 +142,7 @@ class _FinancesScreenState extends State<FinancesScreen> {
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 14),
             ),
-            onPressed: () => _choisirTypeTransaction(provider),
+            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ChooseCategoryScreen(type: TransactionType.saving))),
             child: const Text('Ajouter une transaction',
                 style: TextStyle(fontSize: 15)),
           ),
@@ -229,7 +219,7 @@ class _FinancesScreenState extends State<FinancesScreen> {
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 14),
               ),
-              onPressed: () => _choisirTypeTransaction(provider),
+              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ChooseCategoryScreen(type: TransactionType.saving))),
               child: const Text("Mettre de l'argent de côté",
                   style: TextStyle(fontSize: 15)),
             ),
