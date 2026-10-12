@@ -70,7 +70,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get finTitle => 'Mes finances';
 
   @override
-  String get finBalanceNow => 'Solde actuel';
+  String get finRemaining => 'Reste disponible';
 
   @override
   String get finTabSummary => 'Synthèse';

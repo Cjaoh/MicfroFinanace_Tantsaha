@@ -218,11 +218,11 @@ abstract class AppLocalizations {
   /// **'Ny volako'**
   String get finTitle;
 
-  /// No description provided for @finBalanceNow.
+  /// No description provided for @finRemaining.
   ///
   /// In mg, this message translates to:
-  /// **'Vola misy ankehitriny'**
-  String get finBalanceNow;
+  /// **'Vola azo ampiasaina'**
+  String get finRemaining;
 
   /// No description provided for @finTabSummary.
   ///

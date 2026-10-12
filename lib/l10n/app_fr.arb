@@ -22,7 +22,7 @@
   "dashSeeAll": "Voir tout",
 
   "finTitle": "Mes finances",
-  "finBalanceNow": "Solde actuel",
+  "finRemaining": "Reste disponible",
   "finTabSummary": "Synthèse",
   "finTabTransactions": "Transactions",
   "finTabSavings": "Épargne",

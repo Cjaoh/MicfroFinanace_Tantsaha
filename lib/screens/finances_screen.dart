@@ -2,13 +2,14 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import '../l10n/app_localizations.dart';
 import '../providers/transaction_provider.dart';
 import '../models/transaction_model.dart';
 import '../models/transaction_type.dart';
 import '../core/app_theme.dart';
 import '../widgets/transaction_tile.dart';
 import 'transaction/choose_category_screen.dart';
-
+import 'transaction/choose_type_screen.dart';
 
 class FinancesScreen extends StatefulWidget {
   const FinancesScreen({super.key});
@@ -18,13 +19,13 @@ class FinancesScreen extends StatefulWidget {
 }
 
 class _FinancesScreenState extends State<FinancesScreen> {
-
   String _formatAriary(int montant) {
     return '${NumberFormat('#,###', 'fr_FR').format(montant).replaceAll(',', ' ')} Ar';
   }
 
   @override
   Widget build(BuildContext context) {
+    final l = AppLocalizations.of(context);
     final provider = context.watch<TransactionProvider>();
 
     return DefaultTabController(
@@ -32,16 +33,17 @@ class _FinancesScreenState extends State<FinancesScreen> {
       child: Scaffold(
         appBar: AppBar(
           centerTitle: true,
-          title: const Text('Mes finances',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
-          bottom: const TabBar(
+          title: Text(l.finTitle,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+          bottom: TabBar(
+            isScrollable: true,
             indicatorColor: Colors.white,
             labelColor: Colors.white,
             unselectedLabelColor: AppColors.subtleGreen,
             tabs: [
-              Tab(text: 'Synthèse'),
-              Tab(text: 'Transactions'),
-              Tab(text: 'Épargne'),
+              Tab(text: l.finTabSummary),
+              Tab(text: l.finTabTransactions),
+              Tab(text: l.finTabSavings),
             ],
           ),
         ),
@@ -58,6 +60,7 @@ class _FinancesScreenState extends State<FinancesScreen> {
 
   // ───────────── Onglet 1 : Synthèse ─────────────
   Widget _buildSynthese(TransactionProvider provider) {
+    final l = AppLocalizations.of(context);
     final revenus = provider.totalRevenus;
     final depenses = provider.totalDepenses;
     final epargne = provider.totalEpargne;
@@ -73,8 +76,9 @@ class _FinancesScreenState extends State<FinancesScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Solde actuel',
-                    style: TextStyle(fontSize: 12, color: AppColors.mutedText)),
+                Text(l.finRemaining,
+                    style: const TextStyle(
+                        fontSize: 12, color: AppColors.mutedText)),
                 const SizedBox(height: 6),
                 Text(_formatAriary(provider.balance),
                     style: const TextStyle(
@@ -110,21 +114,21 @@ class _FinancesScreenState extends State<FinancesScreen> {
                     children: [
                       _LegendRow(
                         color: AppColors.revAmount,
-                        label: 'Revenus',
+                        label: l.dashRevenue,
                         valeur: _formatAriary(revenus),
                         pct: pct(revenus),
                       ),
                       const SizedBox(height: 12),
                       _LegendRow(
                         color: AppColors.depAmount,
-                        label: 'Dépenses',
+                        label: l.dashExpenses,
                         valeur: _formatAriary(depenses),
                         pct: pct(depenses),
                       ),
                       const SizedBox(height: 12),
                       _LegendRow(
                         color: AppColors.savAmount,
-                        label: 'Épargne',
+                        label: l.finTabSavings,
                         valeur: _formatAriary(epargne),
                         pct: pct(epargne),
                       ),
@@ -142,9 +146,12 @@ class _FinancesScreenState extends State<FinancesScreen> {
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: 14),
             ),
-            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ChooseCategoryScreen(type: TransactionType.saving))),
-            child: const Text('Ajouter une transaction',
-                style: TextStyle(fontSize: 15)),
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const ChooseTypeScreen()),
+            ),
+            child: Text(l.finAddTransaction,
+                style: const TextStyle(fontSize: 15)),
           ),
         ),
       ],
@@ -153,15 +160,17 @@ class _FinancesScreenState extends State<FinancesScreen> {
 
   // ───────────── Onglet 2 : Transactions ─────────────
   Widget _buildTransactions(TransactionProvider provider) {
+    final l = AppLocalizations.of(context);
     return _listeTransactions(
       provider,
       provider.transactions,
-      "Aucune transaction pour l'instant",
+      l.finEmptyTransactions,
     );
   }
 
   // ───────────── Onglet 3 : Épargne ─────────────
   Widget _buildEpargne(TransactionProvider provider) {
+    final l = AppLocalizations.of(context);
     final epargnes = provider.transactions
         .where((t) => t.type == TransactionType.saving)
         .toList();
@@ -188,8 +197,8 @@ class _FinancesScreenState extends State<FinancesScreen> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Total épargné',
-                          style: TextStyle(
+                      Text(l.finTotalSaved,
+                          style: const TextStyle(
                               fontSize: 12, color: AppColors.mutedText)),
                       const SizedBox(height: 4),
                       Text(_formatAriary(provider.totalEpargne),
@@ -208,7 +217,7 @@ class _FinancesScreenState extends State<FinancesScreen> {
           child: _listeTransactions(
             provider,
             epargnes,
-            "Aucune épargne pour l'instant",
+            l.finEmptySavings,
           ),
         ),
         Padding(
@@ -219,9 +228,15 @@ class _FinancesScreenState extends State<FinancesScreen> {
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 14),
               ),
-              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ChooseCategoryScreen(type: TransactionType.saving))),
-              child: const Text("Mettre de l'argent de côté",
-                  style: TextStyle(fontSize: 15)),
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => const ChooseCategoryScreen(
+                      type: TransactionType.saving),
+                ),
+              ),
+              child: Text(l.finSetAside,
+                  style: const TextStyle(fontSize: 15)),
             ),
           ),
         ),

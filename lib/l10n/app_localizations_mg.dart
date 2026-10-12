@@ -69,7 +69,7 @@ class AppLocalizationsMg extends AppLocalizations {
   String get finTitle => 'Ny volako';
 
   @override
-  String get finBalanceNow => 'Vola misy ankehitriny';
+  String get finRemaining => 'Vola azo ampiasaina';
 
   @override
   String get finTabSummary => 'Fintinana';
