@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
-import 'providers/transaction_provider.dart';
-import 'providers/locale_provider.dart';
-import 'screens/main_navigation.dart';
 import 'core/app_theme.dart';
+import 'data/app_database.dart';
+import 'data/user_profile_repository.dart';
 import 'l10n/app_localizations.dart';
 import 'l10n/fallback_localizations.dart';
+import 'providers/locale_provider.dart';
+import 'providers/transaction_provider.dart';
+import 'screens/main_navigation.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -27,6 +29,11 @@ class MyApp extends StatelessWidget {
           create: (_) => TransactionProvider()..loadTransactions(),
         ),
         ChangeNotifierProvider.value(value: localeProvider),
+        Provider<UserProfileRepository>(
+          create: (_) => UserProfileRepository(
+            appDatabase: AppDatabase.instance,
+          ),
+        ),
       ],
       child: Consumer<LocaleProvider>(
         builder: (context, lp, _) => MaterialApp(
