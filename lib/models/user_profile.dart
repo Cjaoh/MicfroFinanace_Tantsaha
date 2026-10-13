@@ -78,7 +78,23 @@ class UserProfile {
           : (commune != null ? _nettoyerCommune(commune) : this.commune),
     );
   }
-
+  /// Reconstruit un profil déjà validé, par exemple depuis la base.
+  /// Ne revalide pas le téléphone : il est déjà au format +261.
+  factory UserProfile.restaurer({
+    required String prenom,
+    required String nom,
+    required String telephone,
+    required LangueProfil langue,
+    String? commune,
+  }) {
+    return UserProfile._(
+      prenom: prenom,
+      nom: nom,
+      telephone: telephone,
+      langue: langue,
+      commune: _nettoyerCommune(commune),
+    );
+  }
   static String? _nettoyerCommune(String? valeur) {
     final nettoye = valeur?.trim();
     return (nettoye == null || nettoye.isEmpty) ? null : nettoye;
