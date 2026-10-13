@@ -125,4 +125,37 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get finConfirm => 'Confirmer';
+
+  @override
+  String get profileTitle => 'Créer mon profil';
+
+  @override
+  String get profilePrenom => 'Prénom';
+
+  @override
+  String get profileNom => 'Nom';
+
+  @override
+  String get profileTelephone => 'Numéro de téléphone';
+
+  @override
+  String get profileTelephoneHint => 'Ex. : 034 12 345 67';
+
+  @override
+  String get profileCommune => 'Commune ou fokontany (facultatif)';
+
+  @override
+  String get profileLangue => 'Langue';
+
+  @override
+  String get profileSave => 'Enregistrer';
+
+  @override
+  String get profileErrorPrenom => 'Saisissez votre prénom';
+
+  @override
+  String get profileErrorNom => 'Saisissez votre nom';
+
+  @override
+  String get profileErrorTelephone => 'Numéro valide commençant par 03';
 }

@@ -124,4 +124,38 @@ class AppLocalizationsMg extends AppLocalizations {
 
   @override
   String get finConfirm => 'Hamarino';
+
+  @override
+  String get profileTitle => 'Mamorona ny mombamomba anao';
+
+  @override
+  String get profilePrenom => 'Anarana';
+
+  @override
+  String get profileNom => 'Anarana faharoa';
+
+  @override
+  String get profileTelephone => 'Laharana finday';
+
+  @override
+  String get profileTelephoneHint => 'Ohatra : 034 12 345 67';
+
+  @override
+  String get profileCommune => 'Kaominina na fokontany (tsy voatery)';
+
+  @override
+  String get profileLangue => 'Fiteny';
+
+  @override
+  String get profileSave => 'Tehirizo';
+
+  @override
+  String get profileErrorPrenom => 'Ampidiro ny anarana';
+
+  @override
+  String get profileErrorNom => 'Ampidiro ny anarana faharoa';
+
+  @override
+  String get profileErrorTelephone =>
+      'Laharana finday marina, manomboka amin\'ny 03';
 }

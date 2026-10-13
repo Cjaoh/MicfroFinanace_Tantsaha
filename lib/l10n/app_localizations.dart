@@ -331,6 +331,72 @@ abstract class AppLocalizations {
   /// In mg, this message translates to:
   /// **'Hamarino'**
   String get finConfirm;
+
+  /// No description provided for @profileTitle.
+  ///
+  /// In mg, this message translates to:
+  /// **'Mamorona ny mombamomba anao'**
+  String get profileTitle;
+
+  /// No description provided for @profilePrenom.
+  ///
+  /// In mg, this message translates to:
+  /// **'Anarana'**
+  String get profilePrenom;
+
+  /// No description provided for @profileNom.
+  ///
+  /// In mg, this message translates to:
+  /// **'Anarana faharoa'**
+  String get profileNom;
+
+  /// No description provided for @profileTelephone.
+  ///
+  /// In mg, this message translates to:
+  /// **'Laharana finday'**
+  String get profileTelephone;
+
+  /// No description provided for @profileTelephoneHint.
+  ///
+  /// In mg, this message translates to:
+  /// **'Ohatra : 034 12 345 67'**
+  String get profileTelephoneHint;
+
+  /// No description provided for @profileCommune.
+  ///
+  /// In mg, this message translates to:
+  /// **'Kaominina na fokontany (tsy voatery)'**
+  String get profileCommune;
+
+  /// No description provided for @profileLangue.
+  ///
+  /// In mg, this message translates to:
+  /// **'Fiteny'**
+  String get profileLangue;
+
+  /// No description provided for @profileSave.
+  ///
+  /// In mg, this message translates to:
+  /// **'Tehirizo'**
+  String get profileSave;
+
+  /// No description provided for @profileErrorPrenom.
+  ///
+  /// In mg, this message translates to:
+  /// **'Ampidiro ny anarana'**
+  String get profileErrorPrenom;
+
+  /// No description provided for @profileErrorNom.
+  ///
+  /// In mg, this message translates to:
+  /// **'Ampidiro ny anarana faharoa'**
+  String get profileErrorNom;
+
+  /// No description provided for @profileErrorTelephone.
+  ///
+  /// In mg, this message translates to:
+  /// **'Laharana finday marina, manomboka amin\'ny 03'**
+  String get profileErrorTelephone;
 }
 
 class _AppLocalizationsDelegate
