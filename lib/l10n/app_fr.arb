@@ -6,7 +6,6 @@
   "navFinances": "Finances",
   "navMarket": "Marché",
   "navProfile": "Profil",
-
   "dashGreeting": "Bonjour !",
   "dashEncouragement": "Bon courage pour vos cultures !",
   "dashBalanceLabel": "Solde de votre compte",
@@ -20,7 +19,6 @@
   "dashEmptyFarms": "Aucune exploitation enregistrée pour l'instant.",
   "dashEmptyEvents": "Aucun événement pour l'instant.",
   "dashSeeAll": "Voir tout",
-
   "finTitle": "Mes finances",
   "finRemaining": "Reste disponible",
   "finTabSummary": "Synthèse",
@@ -40,5 +38,16 @@
   "finDescriptionHint": "Description (optionnel)",
   "finErrorAmount": "Entrez un montant valide",
   "finErrorCategory": "Sélectionnez une catégorie",
-  "finConfirm": "Confirmer"
+  "finConfirm": "Confirmer",
+  "profileTitle": "Créer mon profil",
+  "profilePrenom": "Prénom",
+  "profileNom": "Nom",
+  "profileTelephone": "Numéro de téléphone",
+  "profileTelephoneHint": "Ex. : 034 12 345 67",
+  "profileCommune": "Commune ou fokontany (facultatif)",
+  "profileLangue": "Langue",
+  "profileSave": "Enregistrer",
+  "profileErrorPrenom": "Saisissez votre prénom",
+  "profileErrorNom": "Saisissez votre nom",
+  "profileErrorTelephone": "Numéro valide commençant par 03"
 }

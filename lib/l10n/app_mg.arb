@@ -1,18 +1,29 @@
 {
   "@@locale": "mg",
   "appTitle": "Tantsaha",
-  "@appTitle": { "description": "Nom de l'application" },
+  "@appTitle": {
+    "description": "Nom de l'application"
+  },
   "navHome": "Fandraisana",
-  "@navHome": { "description": "Onglet Accueil (tableau de bord)" },
+  "@navHome": {
+    "description": "Onglet Accueil (tableau de bord)"
+  },
   "navFarm": "Fambolena",
-  "@navFarm": { "description": "Onglet Exploitation" },
+  "@navFarm": {
+    "description": "Onglet Exploitation"
+  },
   "navFinances": "Vola",
-  "@navFinances": { "description": "Onglet Finances" },
+  "@navFinances": {
+    "description": "Onglet Finances"
+  },
   "navMarket": "Tsena",
-  "@navMarket": { "description": "Onglet Marché" },
+  "@navMarket": {
+    "description": "Onglet Marché"
+  },
   "navProfile": "Momba ahy",
-  "@navProfile": { "description": "Onglet Profil" },
-
+  "@navProfile": {
+    "description": "Onglet Profil"
+  },
   "dashGreeting": "Manao ahoana !",
   "dashEncouragement": "Mandrosoa amin'ny asa fambolenao !",
   "dashBalanceLabel": "Ny vola misy anao",
@@ -26,7 +37,6 @@
   "dashEmptyFarms": "Tsy misy fambolena voarakitra mbola.",
   "dashEmptyEvents": "Tsy misy hetsika mbola.",
   "dashSeeAll": "Jereo rehetra",
-
   "finTitle": "Ny volako",
   "finRemaining": "Vola azo ampiasaina",
   "finTabSummary": "Fintinana",
@@ -46,5 +56,16 @@
   "finDescriptionHint": "Famaritana (tsy voatery)",
   "finErrorAmount": "Ampidiro vola marina",
   "finErrorCategory": "Safidio sokajy",
-  "finConfirm": "Hamarino"
+  "finConfirm": "Hamarino",
+  "profileTitle": "Mamorona ny mombamomba anao",
+  "profilePrenom": "Anarana",
+  "profileNom": "Anarana faharoa",
+  "profileTelephone": "Laharana finday",
+  "profileTelephoneHint": "Ohatra : 034 12 345 67",
+  "profileCommune": "Kaominina na fokontany (tsy voatery)",
+  "profileLangue": "Fiteny",
+  "profileSave": "Tehirizo",
+  "profileErrorPrenom": "Ampidiro ny anarana",
+  "profileErrorNom": "Ampidiro ny anarana faharoa",
+  "profileErrorTelephone": "Laharana finday marina, manomboka amin'ny 03"
 }
