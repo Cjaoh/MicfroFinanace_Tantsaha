@@ -1,6 +1,6 @@
-/// Validation du numéro de téléphone malgache (PROF-01).
-/// Saisie : 10 chiffres commençant par 03 (espaces, tirets et points tolérés).
-/// Stockage : format international, par exemple 0341234567 -> +261341234567.
+// Validation du numéro de téléphone malgache (PROF-01).
+// Saisie : 10 chiffres commençant par 03 (espaces, tirets et points tolérés).
+// Stockage : format international, par exemple 0341234567 -> +261341234567.
 
 enum PhoneValidationError { vide, caracteresInvalides, longueur, prefixe }
 
