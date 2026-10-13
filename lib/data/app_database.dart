@@ -15,9 +15,10 @@ class AppDatabase {
   factory AppDatabase.forTesting(String path) => AppDatabase._(path);
 
   static const String _dbName = 'tantsaha.db';
-  static const int _dbVersion = 2;
+  static const int _dbVersion = 3;
 
   static const String transactionsTable = 'transactions';
+  static const String usersTable = 'users';
 
   final String? _customPath;
   Database? _database;
@@ -60,9 +61,24 @@ class AppDatabase {
   static const String _createDateIndexSql =
       'CREATE INDEX idx_transactions_date ON $transactionsTable (date)';
 
+  // Profil de l'utilisateur local (version 3). Une seule ligne attendue au MVP.
+  // Le PIN n'est pas stocké ici : il sera ajouté avec son hachage plus tard.
+  static const String _createUsersSql = '''
+    CREATE TABLE $usersTable (
+      id TEXT PRIMARY KEY,
+      prenom TEXT NOT NULL CHECK (length(trim(prenom)) > 0),
+      nom TEXT NOT NULL CHECK (length(trim(nom)) > 0),
+      telephone TEXT NOT NULL UNIQUE,
+      langue TEXT NOT NULL CHECK (langue IN ('malagasy', 'francais')),
+      commune TEXT,
+      created_at INTEGER NOT NULL
+    )
+  ''';
+
   Future<void> _onCreate(Database db, int version) async {
     await db.execute(_createTransactionsSql);
     await db.execute(_createDateIndexSql);
+    await db.execute(_createUsersSql);
   }
 
   /// Migrations successives. Chaque `if (oldVersion < N)` ne s'exécute que
@@ -88,6 +104,12 @@ class AppDatabase {
       ''');
       await db.execute('DROP TABLE transactions_old');
       await db.execute(_createDateIndexSql);
+    }
+
+    if (oldVersion < 3) {
+      // Ajout de la table du profil : rien à recopier, les transactions
+      // ne sont pas modifiées.
+      await db.execute(_createUsersSql);
     }
   }
 
