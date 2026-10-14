@@ -15,7 +15,7 @@ class AppDatabase {
   factory AppDatabase.forTesting(String path) => AppDatabase._(path);
 
   static const String _dbName = 'tantsaha.db';
-  static const int _dbVersion = 3;
+  static const int _dbVersion = 4;
 
   static const String transactionsTable = 'transactions';
   static const String usersTable = 'users';
@@ -62,7 +62,8 @@ class AppDatabase {
       'CREATE INDEX idx_transactions_date ON $transactionsTable (date)';
 
   // Profil de l'utilisateur local (version 3). Une seule ligne attendue au MVP.
-  // Le PIN n'est pas stocké ici : il sera ajouté avec son hachage plus tard.
+  // Les colonnes du PIN ne figurent pas ici : elles sont ajoutées en version 4
+  // (voir _ajoutPinSql).
   static const String _createUsersSql = '''
     CREATE TABLE $usersTable (
       id TEXT PRIMARY KEY,
@@ -75,10 +76,21 @@ class AppDatabase {
     )
   ''';
 
+  // Colonnes du PIN (version 4). Nullables : les profils existants n'ont pas
+  // encore de PIN. Définies ici une seule fois, utilisées à l'installation
+  // neuve comme à la migration.
+  static const List<String> _ajoutPinSql = [
+    'ALTER TABLE $usersTable ADD COLUMN pin_hash TEXT',
+    'ALTER TABLE $usersTable ADD COLUMN pin_sel TEXT',
+  ];
+
   Future<void> _onCreate(Database db, int version) async {
     await db.execute(_createTransactionsSql);
     await db.execute(_createDateIndexSql);
     await db.execute(_createUsersSql);
+    for (final sql in _ajoutPinSql) {
+      await db.execute(sql);
+    }
   }
 
   /// Migrations successives. Chaque `if (oldVersion < N)` ne s'exécute que
@@ -110,6 +122,13 @@ class AppDatabase {
       // Ajout de la table du profil : rien à recopier, les transactions
       // ne sont pas modifiées.
       await db.execute(_createUsersSql);
+    }
+
+    if (oldVersion < 4) {
+      // Ajout des colonnes du PIN. Les lignes existantes gardent NULL.
+      for (final sql in _ajoutPinSql) {
+        await db.execute(sql);
+      }
     }
   }
 
