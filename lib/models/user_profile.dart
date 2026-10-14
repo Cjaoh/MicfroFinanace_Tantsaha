@@ -11,6 +11,8 @@ class UserProfile {
     required this.telephone,
     required this.langue,
     this.commune,
+    this.pinHash,
+    this.pinSel,
   });
 
   final String prenom;
@@ -24,8 +26,18 @@ class UserProfile {
   /// Commune ou fokontany, facultative au MVP.
   final String? commune;
 
+  /// Hash salé du PIN. Null tant qu'aucun PIN n'est défini.
+  final String? pinHash;
+
+  /// Sel utilisé pour hasher le PIN. Null tant qu'aucun PIN n'est défini.
+  final String? pinSel;
+
+  /// Vrai si un PIN est défini pour ce profil.
+  bool get aUnPin => pinHash != null && pinSel != null;
+
   /// Crée un profil à partir de la saisie brute.
   /// Retourne la liste des champs invalides si la saisie est refusée.
+  /// Le PIN n'est pas demandé ici : il est défini ensuite.
   static ResultatProfil creer({
     required String prenom,
     required String nom,
@@ -58,12 +70,17 @@ class UserProfile {
   }
 
   /// Corrige les données modifiables. Le téléphone ne change pas.
+  /// Les champs PIN ne sont modifiés que si on les fournit, sauf
+  /// [effacerPin] qui les remet à null.
   UserProfile copyWith({
     String? prenom,
     String? nom,
     LangueProfil? langue,
     String? commune,
     bool effacerCommune = false,
+    String? pinHash,
+    String? pinSel,
+    bool effacerPin = false,
   }) {
     assert(prenom == null || prenom.trim().isNotEmpty);
     assert(nom == null || nom.trim().isNotEmpty);
@@ -76,8 +93,11 @@ class UserProfile {
       commune: effacerCommune
           ? null
           : (commune != null ? _nettoyerCommune(commune) : this.commune),
+      pinHash: effacerPin ? null : (pinHash ?? this.pinHash),
+      pinSel: effacerPin ? null : (pinSel ?? this.pinSel),
     );
   }
+
   /// Reconstruit un profil déjà validé, par exemple depuis la base.
   /// Ne revalide pas le téléphone : il est déjà au format +261.
   factory UserProfile.restaurer({
@@ -86,6 +106,8 @@ class UserProfile {
     required String telephone,
     required LangueProfil langue,
     String? commune,
+    String? pinHash,
+    String? pinSel,
   }) {
     return UserProfile._(
       prenom: prenom,
@@ -93,8 +115,11 @@ class UserProfile {
       telephone: telephone,
       langue: langue,
       commune: _nettoyerCommune(commune),
+      pinHash: pinHash,
+      pinSel: pinSel,
     );
   }
+
   static String? _nettoyerCommune(String? valeur) {
     final nettoye = valeur?.trim();
     return (nettoye == null || nettoye.isEmpty) ? null : nettoye;

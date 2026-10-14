@@ -27,11 +27,15 @@ class UserProfileRepository {
       telephone: ligne['telephone'] as String,
       langue: LangueProfil.values.byName(ligne['langue'] as String),
       commune: ligne['commune'] as String?,
+      pinHash: ligne['pin_hash'] as String?,
+      pinSel: ligne['pin_sel'] as String?,
     );
   }
 
   /// Crée le profil s'il n'existe pas, sinon met à jour les données existantes.
   /// La date de création est conservée lors des mises à jour.
+  /// Les colonnes PIN ne sont écrites que si le profil possède un PIN, afin
+  /// qu'un profil rechargé sans PIN n'efface pas celui déjà enregistré.
   Future<void> enregistrer(UserProfile profil) async {
     final db = await appDatabase.database;
     final valeurs = <String, Object?>{
@@ -40,6 +44,8 @@ class UserProfileRepository {
       'telephone': profil.telephone,
       'langue': profil.langue.name,
       'commune': profil.commune,
+      if (profil.aUnPin) 'pin_hash': profil.pinHash,
+      if (profil.aUnPin) 'pin_sel': profil.pinSel,
     };
 
     final existants = await db.query(
@@ -64,5 +70,22 @@ class UserProfileRepository {
       );
     }
   }
-}
 
+  /// Enregistre le hash et le sel du PIN, sans toucher aux autres données.
+  /// Lève une [StateError] si aucun profil n'existe encore.
+  Future<void> enregistrerPin({
+    required String pinHash,
+    required String pinSel,
+  }) async {
+    final db = await appDatabase.database;
+    final modifies = await db.update(
+      AppDatabase.usersTable,
+      {'pin_hash': pinHash, 'pin_sel': pinSel},
+      where: 'id = ?',
+      whereArgs: [profilId],
+    );
+    if (modifies == 0) {
+      throw StateError('Aucun profil local : impossible d\'enregistrer le PIN.');
+    }
+  }
+}

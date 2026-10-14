@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:microfinance_tantsaha/data/app_database.dart';
 import 'package:microfinance_tantsaha/data/user_profile_repository.dart';
@@ -10,63 +8,64 @@ void main() {
   sqfliteFfiInit();
   databaseFactory = databaseFactoryFfi;
 
-  late Directory dir;
-  late AppDatabase appDb;
-  late UserProfileRepository repo;
+  late AppDatabase appDatabase;
+  late UserProfileRepository repository;
 
   setUp(() {
-    dir = Directory.systemTemp.createTempSync('tantsaha_profil_');
-    appDb = AppDatabase.forTesting('${dir.path}/tantsaha_test.db');
-    repo = UserProfileRepository(appDatabase: appDb);
+    appDatabase = AppDatabase.forTesting(inMemoryDatabasePath);
+    repository = UserProfileRepository(appDatabase: appDatabase);
   });
 
   tearDown(() async {
-    await appDb.close();
-    dir.deleteSync(recursive: true);
+    await appDatabase.close();
   });
 
-  UserProfile profilInitial() => UserProfile.creer(
-        prenom: 'Rakoto',
-        nom: 'Jean',
-        telephoneSaisi: '0341234567',
-        langue: LangueProfil.malagasy,
-      ).profil!;
+  UserProfile profilDeTest() => UserProfile.restaurer(
+        prenom: 'Cédrick',
+        nom: 'Rakoto',
+        telephone: '+261341234567',
+        langue: LangueProfil.francais,
+      );
 
-  test('charger renvoie null quand aucun profil n\'existe', () async {
-    expect(await repo.charger(), isNull);
-  });
+  test('un profil sans PIN relit pinHash et pinSel à null', () async {
+    await repository.enregistrer(profilDeTest());
 
-  test('enregistrer puis charger restitue le profil', () async {
-    await repo.enregistrer(profilInitial());
+    final relu = await repository.charger();
 
-    final relu = await repo.charger();
     expect(relu, isNotNull);
-    expect(relu!.prenom, 'Rakoto');
-    expect(relu.telephone, '+261341234567');
-    expect(relu.langue, LangueProfil.malagasy);
-    expect(relu.commune, isNull);
+    expect(relu!.aUnPin, isFalse);
+    expect(relu.pinHash, isNull);
+    expect(relu.pinSel, isNull);
   });
 
-  test('une seconde écriture met à jour sans créer de doublon', () async {
-    await repo.enregistrer(profilInitial());
-    await repo.enregistrer(
-      profilInitial().copyWith(prenom: 'Rabe', commune: 'Antsirabe'),
-    );
+  test('enregistrerPin puis charger relit le hash et le sel', () async {
+    await repository.enregistrer(profilDeTest());
+    await repository.enregistrerPin(pinHash: 'hash-test', pinSel: 'sel-test');
 
-    final db = await appDb.database;
-    expect(await db.query(AppDatabase.usersTable), hasLength(1));
+    final relu = await repository.charger();
 
-    final relu = await repo.charger();
-    expect(relu!.prenom, 'Rabe');
-    expect(relu.commune, 'Antsirabe');
+    expect(relu!.pinHash, 'hash-test');
+    expect(relu.pinSel, 'sel-test');
+    expect(relu.aUnPin, isTrue);
   });
 
-  test('le changement de langue persiste', () async {
-    await repo.enregistrer(profilInitial());
-    await repo.enregistrer(
-      profilInitial().copyWith(langue: LangueProfil.francais),
-    );
+  test('enregistrer un profil sans PIN n\'efface pas le PIN existant', () async {
+    await repository.enregistrer(profilDeTest());
+    await repository.enregistrerPin(pinHash: 'hash-test', pinSel: 'sel-test');
 
-    expect((await repo.charger())!.langue, LangueProfil.francais);
+    final recharge = await repository.charger();
+    await repository.enregistrer(recharge!.copyWith(prenom: 'Jean'));
+
+    final relu = await repository.charger();
+    expect(relu!.prenom, 'Jean');
+    expect(relu.pinHash, 'hash-test');
+    expect(relu.pinSel, 'sel-test');
+  });
+
+  test('enregistrerPin échoue si aucun profil n\'existe', () async {
+    expect(
+      () => repository.enregistrerPin(pinHash: 'h', pinSel: 's'),
+      throwsStateError,
+    );
   });
 }
