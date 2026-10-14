@@ -26,6 +26,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   shared_preferences: ^2.5.6
+  crypto: ^3.0.7
 
 # --- Dépendances de développement ---
 dev_dependencies:
