@@ -67,5 +67,11 @@
   "profileSave": "Tehirizo",
   "profileErrorPrenom": "Ampidiro ny anarana",
   "profileErrorNom": "Ampidiro ny anarana faharoa",
-  "profileErrorTelephone": "Laharana finday marina, manomboka amin'ny 03"
+  "profileErrorTelephone": "Laharana finday marina, manomboka amin'ny 03",
+  "profilePin": "PIN (4 isa)",
+  "profilePinConfirm": "Averina ampidiro ny PIN",
+  "profileErrorPinLongueur": "Ny PIN tokony hisy isa 4",
+  "profileErrorPinChiffres": "Isa ihany no azo ampiasaina",
+  "profileErrorPinTrivial": "Safidio PIN hafa, tsy 1111 na 1234",
+  "profileErrorPinConfirm": "Tsy mitovy ny PIN roa"
 }
