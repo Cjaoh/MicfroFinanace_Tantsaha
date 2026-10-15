@@ -15,7 +15,7 @@ class AppDatabase {
   factory AppDatabase.forTesting(String path) => AppDatabase._(path);
 
   static const String _dbName = 'tantsaha.db';
-  static const int _dbVersion = 4;
+  static const int _dbVersion = 5;
 
   static const String transactionsTable = 'transactions';
   static const String usersTable = 'users';
@@ -62,8 +62,8 @@ class AppDatabase {
       'CREATE INDEX idx_transactions_date ON $transactionsTable (date)';
 
   // Profil de l'utilisateur local (version 3). Une seule ligne attendue au MVP.
-  // Les colonnes du PIN ne figurent pas ici : elles sont ajoutées en version 4
-  // (voir _ajoutPinSql).
+  // Les colonnes du PIN et du consentement ne figurent pas ici : elles sont
+  // ajoutées en versions 4 et 5 (voir _ajoutPinSql et _ajoutConsentementSql).
   static const String _createUsersSql = '''
     CREATE TABLE $usersTable (
       id TEXT PRIMARY KEY,
@@ -84,6 +84,12 @@ class AppDatabase {
     'ALTER TABLE $usersTable ADD COLUMN pin_sel TEXT',
   ];
 
+  // Horodatage du consentement, en millisecondes depuis l'époque (version 5).
+  // Nullable : les profils créés avant cette version n'ont pas de consentement
+  // enregistré.
+  static const String _ajoutConsentementSql =
+      'ALTER TABLE $usersTable ADD COLUMN consentement_at INTEGER';
+
   Future<void> _onCreate(Database db, int version) async {
     await db.execute(_createTransactionsSql);
     await db.execute(_createDateIndexSql);
@@ -91,6 +97,7 @@ class AppDatabase {
     for (final sql in _ajoutPinSql) {
       await db.execute(sql);
     }
+    await db.execute(_ajoutConsentementSql);
   }
 
   /// Migrations successives. Chaque `if (oldVersion < N)` ne s'exécute que
@@ -129,6 +136,11 @@ class AppDatabase {
       for (final sql in _ajoutPinSql) {
         await db.execute(sql);
       }
+    }
+
+    if (oldVersion < 5) {
+      // Ajout de l'horodatage du consentement. Les lignes existantes gardent NULL.
+      await db.execute(_ajoutConsentementSql);
     }
   }
 

@@ -9,6 +9,7 @@ void main() {
         nom: 'Jean',
         telephoneSaisi: '034 12 34 567',
         langue: LangueProfil.malagasy,
+        consentement: true,
       );
       expect(r.estValide, isTrue);
       expect(r.profil!.telephone, '+261341234567');
@@ -22,6 +23,7 @@ void main() {
         nom: ' Jean ',
         telephoneSaisi: '0341234567',
         langue: LangueProfil.francais,
+        consentement: true,
         commune: '   ',
       );
       expect(r.profil!.prenom, 'Rakoto');
@@ -35,6 +37,7 @@ void main() {
         nom: 'Jean',
         telephoneSaisi: '0341234567',
         langue: LangueProfil.malagasy,
+        consentement: true,
         commune: ' Antsirabe ',
       );
       expect(r.profil!.commune, 'Antsirabe');
@@ -46,10 +49,37 @@ void main() {
         nom: 'Jean',
         telephoneSaisi: '0201234567',
         langue: LangueProfil.malagasy,
+        consentement: true,
       );
       expect(r.estValide, isFalse);
       expect(r.profil, isNull);
       expect(r.erreurs, [ChampProfil.prenom, ChampProfil.telephone]);
+    });
+
+    test('refuse le profil sans consentement', () {
+      final r = UserProfile.creer(
+        prenom: 'Rakoto',
+        nom: 'Jean',
+        telephoneSaisi: '0341234567',
+        langue: LangueProfil.malagasy,
+        consentement: false,
+      );
+      expect(r.estValide, isFalse);
+      expect(r.erreurs, [ChampProfil.consentement]);
+    });
+
+    test('enregistre la date du consentement fournie', () {
+      final date = DateTime(2026, 10, 15, 9, 30);
+      final r = UserProfile.creer(
+        prenom: 'Rakoto',
+        nom: 'Jean',
+        telephoneSaisi: '0341234567',
+        langue: LangueProfil.malagasy,
+        consentement: true,
+        maintenant: date,
+      );
+      expect(r.profil!.aConsenti, isTrue);
+      expect(r.profil!.consentementLe, date);
     });
   });
 
@@ -62,6 +92,7 @@ void main() {
         nom: 'Jean',
         telephoneSaisi: '0341234567',
         langue: LangueProfil.malagasy,
+        consentement: true,
         commune: 'Antsirabe',
       ).profil!;
     });
@@ -83,6 +114,12 @@ void main() {
     test('efface la commune avec effacerCommune', () {
       final corrige = profil.copyWith(effacerCommune: true);
       expect(corrige.commune, isNull);
+    });
+
+    test('conserve le consentement lors d une correction', () {
+      final corrige = profil.copyWith(prenom: 'Rabe');
+      expect(corrige.consentementLe, profil.consentementLe);
+      expect(corrige.aConsenti, isTrue);
     });
   });
 }

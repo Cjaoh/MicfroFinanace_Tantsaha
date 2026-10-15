@@ -2,7 +2,7 @@ import '../domain/phone_validation.dart';
 
 enum LangueProfil { malagasy, francais }
 
-enum ChampProfil { prenom, nom, telephone }
+enum ChampProfil { prenom, nom, telephone, consentement }
 
 class UserProfile {
   const UserProfile._({
@@ -13,6 +13,7 @@ class UserProfile {
     this.commune,
     this.pinHash,
     this.pinSel,
+    this.consentementLe,
   });
 
   final String prenom;
@@ -32,18 +33,28 @@ class UserProfile {
   /// Sel utilisé pour hasher le PIN. Null tant qu'aucun PIN n'est défini.
   final String? pinSel;
 
+  /// Date et heure du consentement. Obligatoire à la création, donc non null
+  /// pour tout profil créé par [creer].
+  final DateTime? consentementLe;
+
   /// Vrai si un PIN est défini pour ce profil.
   bool get aUnPin => pinHash != null && pinSel != null;
 
+  /// Vrai si le consentement a été donné.
+  bool get aConsenti => consentementLe != null;
+
   /// Crée un profil à partir de la saisie brute.
   /// Retourne la liste des champs invalides si la saisie est refusée.
-  /// Le PIN n'est pas demandé ici : il est défini ensuite.
+  /// Le consentement est obligatoire : sans lui, la saisie est refusée.
+  /// [maintenant] permet de fixer la date du consentement dans les tests.
   static ResultatProfil creer({
     required String prenom,
     required String nom,
     required String telephoneSaisi,
     required LangueProfil langue,
+    required bool consentement,
     String? commune,
+    DateTime? maintenant,
   }) {
     final prenomNettoye = prenom.trim();
     final nomNettoye = nom.trim();
@@ -53,6 +64,7 @@ class UserProfile {
       if (prenomNettoye.isEmpty) ChampProfil.prenom,
       if (nomNettoye.isEmpty) ChampProfil.nom,
       if (!telephone.estValide) ChampProfil.telephone,
+      if (!consentement) ChampProfil.consentement,
     ];
     if (erreurs.isNotEmpty) {
       return ResultatProfil.invalide(erreurs);
@@ -65,13 +77,14 @@ class UserProfile {
         telephone: telephone.normalise!,
         langue: langue,
         commune: _nettoyerCommune(commune),
+        consentementLe: maintenant ?? DateTime.now(),
       ),
     );
   }
 
   /// Corrige les données modifiables. Le téléphone ne change pas.
   /// Les champs PIN ne sont modifiés que si on les fournit, sauf
-  /// [effacerPin] qui les remet à null.
+  /// [effacerPin] qui les remet à null. Le consentement n'est pas modifiable.
   UserProfile copyWith({
     String? prenom,
     String? nom,
@@ -95,6 +108,7 @@ class UserProfile {
           : (commune != null ? _nettoyerCommune(commune) : this.commune),
       pinHash: effacerPin ? null : (pinHash ?? this.pinHash),
       pinSel: effacerPin ? null : (pinSel ?? this.pinSel),
+      consentementLe: consentementLe,
     );
   }
 
@@ -108,6 +122,7 @@ class UserProfile {
     String? commune,
     String? pinHash,
     String? pinSel,
+    DateTime? consentementLe,
   }) {
     return UserProfile._(
       prenom: prenom,
@@ -117,6 +132,7 @@ class UserProfile {
       commune: _nettoyerCommune(commune),
       pinHash: pinHash,
       pinSel: pinSel,
+      consentementLe: consentementLe,
     );
   }
 

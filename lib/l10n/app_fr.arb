@@ -55,5 +55,7 @@
   "profileErrorPinLongueur": "Le code doit comporter 4 chiffres",
   "profileErrorPinChiffres": "Chiffres seulement",
   "profileErrorPinTrivial": "Choisissez un code moins évident (pas 1111 ni 1234)",
-  "profileErrorPinConfirm": "Les deux codes ne correspondent pas"
+  "profileErrorPinConfirm": "Les deux codes ne correspondent pas",
+  "profileConsent": "J'accepte que mes informations soient utilisées pour accéder au service Tantsaha",
+  "profileErrorConsent": "Veuillez accepter pour continuer"
 }

@@ -68,6 +68,7 @@ void main() {
       nom: 'Andria',
       telephoneSaisi: '034 12 345 67',
       langue: LangueProfil.malagasy,
+      consentement: true,
     ).profil!;
     await tester.runAsync(() => repository.enregistrer(profil));
 

@@ -45,11 +45,12 @@ void main() {
     addTearDown(tester.view.resetDevicePixelRatio);
   }
 
-  /// Remplit les informations personnelles valides et les deux champs PIN.
+  /// Remplit les informations, les deux champs PIN et coche le consentement.
   Future<void> remplirFormulaire(
     WidgetTester tester, {
     required String pin,
     required String confirmation,
+    bool consentement = true,
   }) async {
     await tester.enterText(find.widgetWithText(TextField, 'Prénom'), 'Rasoa');
     await tester.enterText(find.widgetWithText(TextField, 'Nom'), 'Andria');
@@ -65,6 +66,10 @@ void main() {
       find.widgetWithText(TextField, 'Confirmez le code PIN'),
       confirmation,
     );
+    if (consentement) {
+      await tester.tap(find.byType(CheckboxListTile));
+      await tester.pump();
+    }
   }
 
   testWidgets('affiche les erreurs par champ si la saisie est vide',
@@ -81,6 +86,30 @@ void main() {
     expect(find.text('Saisissez votre nom'), findsOneWidget);
     expect(find.text('Numéro valide commençant par 03'), findsOneWidget);
     expect(find.text('Le code doit comporter 4 chiffres'), findsOneWidget);
+    expect(find.text('Veuillez accepter pour continuer'), findsOneWidget);
+  });
+
+  testWidgets('refuse un profil sans consentement', (tester) async {
+    grandEcran(tester);
+    UserProfile? enregistre;
+    await tester.pumpWidget(
+      app(CreationProfilScreen(
+        repository: repository,
+        onEnregistre: (profil) => enregistre = profil,
+      )),
+    );
+
+    await remplirFormulaire(
+      tester,
+      pin: '2581',
+      confirmation: '2581',
+      consentement: false,
+    );
+    await tester.tap(find.byType(FilledButton));
+    await tester.pump();
+
+    expect(find.text('Veuillez accepter pour continuer'), findsOneWidget);
+    expect(enregistre, isNull);
   });
 
   testWidgets('refuse un PIN trop court sans enregistrer', (tester) async {
@@ -140,7 +169,8 @@ void main() {
     expect(enregistre, isNull);
   });
 
-  testWidgets('enregistre un profil valide avec PIN haché', (tester) async {
+  testWidgets('enregistre un profil valide avec PIN haché et consentement',
+      (tester) async {
     grandEcran(tester);
     UserProfile? enregistre;
     await tester.pumpWidget(
@@ -162,10 +192,12 @@ void main() {
     expect(enregistre, isNotNull);
     expect(enregistre!.prenom, 'Rasoa');
     expect(enregistre!.aUnPin, isTrue);
+    expect(enregistre!.aConsenti, isTrue);
 
     final relu = await tester.runAsync(() => repository.charger());
     expect(relu?.prenom, 'Rasoa');
     expect(relu?.aUnPin, isTrue);
+    expect(relu?.aConsenti, isTrue);
     expect(
       verifierPin('2581', sel: relu!.pinSel!, hashAttendu: relu.pinHash!),
       isTrue,

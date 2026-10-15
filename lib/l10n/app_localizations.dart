@@ -397,6 +397,54 @@ abstract class AppLocalizations {
   /// In mg, this message translates to:
   /// **'Laharana finday marina, manomboka amin\'ny 03'**
   String get profileErrorTelephone;
+
+  /// No description provided for @profilePin.
+  ///
+  /// In mg, this message translates to:
+  /// **'PIN (4 isa)'**
+  String get profilePin;
+
+  /// No description provided for @profilePinConfirm.
+  ///
+  /// In mg, this message translates to:
+  /// **'Averina ampidiro ny PIN'**
+  String get profilePinConfirm;
+
+  /// No description provided for @profileErrorPinLongueur.
+  ///
+  /// In mg, this message translates to:
+  /// **'Ny PIN tokony hisy isa 4'**
+  String get profileErrorPinLongueur;
+
+  /// No description provided for @profileErrorPinChiffres.
+  ///
+  /// In mg, this message translates to:
+  /// **'Isa ihany no azo ampiasaina'**
+  String get profileErrorPinChiffres;
+
+  /// No description provided for @profileErrorPinTrivial.
+  ///
+  /// In mg, this message translates to:
+  /// **'Safidio PIN hafa, tsy 1111 na 1234'**
+  String get profileErrorPinTrivial;
+
+  /// No description provided for @profileErrorPinConfirm.
+  ///
+  /// In mg, this message translates to:
+  /// **'Tsy mitovy ny PIN roa'**
+  String get profileErrorPinConfirm;
+
+  /// No description provided for @profileConsent.
+  ///
+  /// In mg, this message translates to:
+  /// **'Manaiky aho fa ampiasaina ny vaovaoko mba hahazoana ny serivisy Tantsaha'**
+  String get profileConsent;
+
+  /// No description provided for @profileErrorConsent.
+  ///
+  /// In mg, this message translates to:
+  /// **'Ampio ny fanekenao mba hitohy'**
+  String get profileErrorConsent;
 }
 
 class _AppLocalizationsDelegate

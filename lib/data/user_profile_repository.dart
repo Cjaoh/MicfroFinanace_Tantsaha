@@ -21,6 +21,7 @@ class UserProfileRepository {
     if (lignes.isEmpty) return null;
 
     final ligne = lignes.first;
+    final consentementMs = ligne['consentement_at'] as int?;
     return UserProfile.restaurer(
       prenom: ligne['prenom'] as String,
       nom: ligne['nom'] as String,
@@ -29,13 +30,17 @@ class UserProfileRepository {
       commune: ligne['commune'] as String?,
       pinHash: ligne['pin_hash'] as String?,
       pinSel: ligne['pin_sel'] as String?,
+      consentementLe: consentementMs == null
+          ? null
+          : DateTime.fromMillisecondsSinceEpoch(consentementMs),
     );
   }
 
   /// Crée le profil s'il n'existe pas, sinon met à jour les données existantes.
   /// La date de création est conservée lors des mises à jour.
-  /// Les colonnes PIN ne sont écrites que si le profil possède un PIN, afin
-  /// qu'un profil rechargé sans PIN n'efface pas celui déjà enregistré.
+  /// Les colonnes PIN et consentement ne sont écrites que si le profil les
+  /// possède, afin qu'un profil rechargé sans ces données n'efface pas celles
+  /// déjà enregistrées.
   Future<void> enregistrer(UserProfile profil) async {
     final db = await appDatabase.database;
     final valeurs = <String, Object?>{
@@ -46,6 +51,8 @@ class UserProfileRepository {
       'commune': profil.commune,
       if (profil.aUnPin) 'pin_hash': profil.pinHash,
       if (profil.aUnPin) 'pin_sel': profil.pinSel,
+      if (profil.consentementLe != null)
+        'consentement_at': profil.consentementLe!.millisecondsSinceEpoch,
     };
 
     final existants = await db.query(

@@ -7,9 +7,9 @@ import '../../l10n/app_localizations.dart';
 import '../../models/user_profile.dart';
 
 /// Formulaire de création du profil (PROF-01).
-/// La validation des informations est faite par UserProfile.creer, celle du
-/// PIN par validerPin. Le profil et son PIN sont enregistrés en une seule
-/// écriture, pour éviter un profil enregistré sans PIN.
+/// La validation des informations et du consentement est faite par
+/// UserProfile.creer, celle du PIN par validerPin. Le profil et son PIN sont
+/// enregistrés en une seule écriture, pour éviter un profil sans PIN.
 class CreationProfilScreen extends StatefulWidget {
   const CreationProfilScreen({
     super.key,
@@ -34,6 +34,7 @@ class _CreationProfilScreenState extends State<CreationProfilScreen> {
   final _pinCtrl = TextEditingController();
   final _pinConfirmCtrl = TextEditingController();
   LangueProfil _langue = LangueProfil.malagasy;
+  bool _consentement = false;
 
   ResultatProfil? _resultat;
   ErreurPin? _erreurPin;
@@ -59,6 +60,7 @@ class _CreationProfilScreenState extends State<CreationProfilScreen> {
       nom: _nomCtrl.text,
       telephoneSaisi: _telephoneCtrl.text,
       langue: _langue,
+      consentement: _consentement,
       commune: _communeCtrl.text,
     );
     final pin = _pinCtrl.text;
@@ -100,6 +102,7 @@ class _CreationProfilScreenState extends State<CreationProfilScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final erreurPin = _erreurPin;
+    final couleurErreur = Theme.of(context).colorScheme.error;
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.profileTitle)),
@@ -193,6 +196,24 @@ class _CreationProfilScreenState extends State<CreationProfilScreen> {
               errorText: _pinsDifferents ? l10n.profileErrorPinConfirm : null,
             ),
           ),
+          const SizedBox(height: 16),
+          CheckboxListTile(
+            value: _consentement,
+            contentPadding: EdgeInsets.zero,
+            controlAffinity: ListTileControlAffinity.leading,
+            title: Text(l10n.profileConsent),
+            onChanged: _enregistrement
+                ? null
+                : (valeur) => setState(() => _consentement = valeur ?? false),
+          ),
+          if (_erreurs.contains(ChampProfil.consentement))
+            Padding(
+              padding: const EdgeInsets.only(left: 16),
+              child: Text(
+                l10n.profileErrorConsent,
+                style: TextStyle(color: couleurErreur),
+              ),
+            ),
           const SizedBox(height: 24),
           FilledButton(
             onPressed: _enregistrement ? null : _enregistrer,

@@ -158,4 +158,30 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get profileErrorTelephone => 'Numéro valide commençant par 03';
+
+  @override
+  String get profilePin => 'Code PIN (4 chiffres)';
+
+  @override
+  String get profilePinConfirm => 'Confirmez le code PIN';
+
+  @override
+  String get profileErrorPinLongueur => 'Le code doit comporter 4 chiffres';
+
+  @override
+  String get profileErrorPinChiffres => 'Chiffres seulement';
+
+  @override
+  String get profileErrorPinTrivial =>
+      'Choisissez un code moins évident (pas 1111 ni 1234)';
+
+  @override
+  String get profileErrorPinConfirm => 'Les deux codes ne correspondent pas';
+
+  @override
+  String get profileConsent =>
+      'J\'accepte que mes informations soient utilisées pour accéder au service Tantsaha';
+
+  @override
+  String get profileErrorConsent => 'Veuillez accepter pour continuer';
 }

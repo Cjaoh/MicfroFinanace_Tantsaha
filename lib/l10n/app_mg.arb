@@ -73,5 +73,7 @@
   "profileErrorPinLongueur": "Ny PIN tokony hisy isa 4",
   "profileErrorPinChiffres": "Isa ihany no azo ampiasaina",
   "profileErrorPinTrivial": "Safidio PIN hafa, tsy 1111 na 1234",
-  "profileErrorPinConfirm": "Tsy mitovy ny PIN roa"
+  "profileErrorPinConfirm": "Tsy mitovy ny PIN roa",
+  "profileConsent": "Manaiky aho fa ampiasaina ny vaovaoko mba hahazoana ny serivisy Tantsaha",
+  "profileErrorConsent": "Ampio ny fanekenao mba hitohy"
 }

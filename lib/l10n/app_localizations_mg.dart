@@ -158,4 +158,29 @@ class AppLocalizationsMg extends AppLocalizations {
   @override
   String get profileErrorTelephone =>
       'Laharana finday marina, manomboka amin\'ny 03';
+
+  @override
+  String get profilePin => 'PIN (4 isa)';
+
+  @override
+  String get profilePinConfirm => 'Averina ampidiro ny PIN';
+
+  @override
+  String get profileErrorPinLongueur => 'Ny PIN tokony hisy isa 4';
+
+  @override
+  String get profileErrorPinChiffres => 'Isa ihany no azo ampiasaina';
+
+  @override
+  String get profileErrorPinTrivial => 'Safidio PIN hafa, tsy 1111 na 1234';
+
+  @override
+  String get profileErrorPinConfirm => 'Tsy mitovy ny PIN roa';
+
+  @override
+  String get profileConsent =>
+      'Manaiky aho fa ampiasaina ny vaovaoko mba hahazoana ny serivisy Tantsaha';
+
+  @override
+  String get profileErrorConsent => 'Ampio ny fanekenao mba hitohy';
 }
