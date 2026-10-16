@@ -25,7 +25,9 @@ class _ProfilScreenState extends State<ProfilScreen> {
   }
 
   void _recharger() {
-    setState(() => _chargement = _repository.charger());
+    setState(() {
+      _chargement = _repository.charger();
+    });
   }
 
   @override

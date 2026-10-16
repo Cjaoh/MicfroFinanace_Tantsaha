@@ -183,4 +183,10 @@ class AppLocalizationsMg extends AppLocalizations {
 
   @override
   String get profileErrorConsent => 'Ampio ny fanekenao mba hitohy';
+
+  @override
+  String get pinVerifyTitle => 'Ampidiro ny PIN-nao';
+
+  @override
+  String get pinVerifyWrong => 'PIN diso. Andramo indray.';
 }

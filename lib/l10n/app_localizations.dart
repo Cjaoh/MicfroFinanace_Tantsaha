@@ -445,6 +445,18 @@ abstract class AppLocalizations {
   /// In mg, this message translates to:
   /// **'Ampio ny fanekenao mba hitohy'**
   String get profileErrorConsent;
+
+  /// No description provided for @pinVerifyTitle.
+  ///
+  /// In mg, this message translates to:
+  /// **'Ampidiro ny PIN-nao'**
+  String get pinVerifyTitle;
+
+  /// No description provided for @pinVerifyWrong.
+  ///
+  /// In mg, this message translates to:
+  /// **'PIN diso. Andramo indray.'**
+  String get pinVerifyWrong;
 }
 
 class _AppLocalizationsDelegate

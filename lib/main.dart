@@ -8,7 +8,7 @@ import 'l10n/app_localizations.dart';
 import 'l10n/fallback_localizations.dart';
 import 'providers/locale_provider.dart';
 import 'providers/transaction_provider.dart';
-import 'screens/main_navigation.dart';
+import 'screens/profil/demarrage_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -48,8 +48,7 @@ class MyApp extends StatelessWidget {
             GlobalWidgetsLocalizations.delegate,
             GlobalCupertinoLocalizations.delegate,
           ],
-          debugShowCheckedModeBanner: false,
-          home: const MainNavigation(),
+          home: const DemarrageScreen(),
         ),
       ),
     );

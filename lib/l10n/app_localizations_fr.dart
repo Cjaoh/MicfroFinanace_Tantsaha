@@ -184,4 +184,10 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get profileErrorConsent => 'Veuillez accepter pour continuer';
+
+  @override
+  String get pinVerifyTitle => 'Saisissez votre PIN';
+
+  @override
+  String get pinVerifyWrong => 'PIN incorrect. Réessayez.';
 }

@@ -75,5 +75,7 @@
   "profileErrorPinTrivial": "Safidio PIN hafa, tsy 1111 na 1234",
   "profileErrorPinConfirm": "Tsy mitovy ny PIN roa",
   "profileConsent": "Manaiky aho fa ampiasaina ny vaovaoko mba hahazoana ny serivisy Tantsaha",
-  "profileErrorConsent": "Ampio ny fanekenao mba hitohy"
+  "profileErrorConsent": "Ampio ny fanekenao mba hitohy",
+  "pinVerifyTitle": "Ampidiro ny PIN-nao",
+  "pinVerifyWrong": "PIN diso. Andramo indray."
 }
